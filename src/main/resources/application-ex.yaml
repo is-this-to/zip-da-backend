@@ -1,0 +1,33 @@
+spring:
+  application:
+    name:
+  web:
+    error:
+      include-stacktrace:
+
+  servlet:
+    multipart:
+      max-file-size:
+      max-request-size:
+
+  datasource:
+    url:
+    username:
+    password:
+    driver-class-name:
+
+mybatis:
+  mapper-locations:
+  type-aliases-package:
+
+logging:
+  file:
+    name:
+  level:
+    root:
+
+    com.zipdabackend.controllers:
+
+# Security & JWT 추가 설정 필요
+
+# config 추가 설정 필요
