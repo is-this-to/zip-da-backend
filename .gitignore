@@ -6,6 +6,9 @@ build/
 !**/src/test/**/build/
 application.yaml
 storage/
+/AGENTS.md
+/README.md
+/1st-doc/
 
 ### STS ###
 .apt_generated
