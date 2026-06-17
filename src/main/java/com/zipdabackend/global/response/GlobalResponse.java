@@ -1,4 +1,4 @@
-package com.zipdabackend.global.responses;
+package com.zipdabackend.global.response;
 
 import lombok.Builder;
 
