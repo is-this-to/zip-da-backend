@@ -1,15 +1,16 @@
 package com.zipdabackend.domain.user.response;
 
+import com.zipdabackend.global.constant.UserRole;
 import lombok.Builder;
 
 @Builder
 public record UserResponse(
-    long userId
-    ,String email
-    ,String name
-    ,String nick
-    ,String phone
-    ,String role
-    ,String profile
-    ,String createdAt
+        long userId
+    , String email
+    , String name
+    , String nick
+    , String phone
+    , UserRole role
+    , String profile
+    , String createdAt
 ) {}

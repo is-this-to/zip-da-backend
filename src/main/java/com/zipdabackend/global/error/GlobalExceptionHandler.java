@@ -1,5 +1,9 @@
 package com.zipdabackend.global.error;
 
+import com.zipdabackend.global.error.custom.DuplicateEmailException;
+import com.zipdabackend.global.error.custom.DuplicateNickException;
+import com.zipdabackend.global.error.custom.DuplicateUserException;
+import com.zipdabackend.global.error.custom.UserRegistrationFailedException;
 import com.zipdabackend.global.response.GlobalResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +21,55 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    // ------------------------------------------
+//              한지윤 에러 모음
+    // ------------------------------------------
+    @ExceptionHandler(DuplicateEmailException.class)
+    public ResponseEntity<GlobalResponse<String>> duplicateEmailHandle(DuplicateEmailException e) {
+        return ResponseEntity.status(409).body(
+                GlobalResponse.<String>builder()
+                        .code("E30")
+                        .message("중복처리")
+                        .data(e.getMessage())
+                        .build()
+        );
+    }
+    @ExceptionHandler(DuplicateNickException.class)
+    public ResponseEntity<GlobalResponse<String>> duplicateNickHandle(DuplicateNickException e) {
+        return ResponseEntity.status(409).body(
+                GlobalResponse.<String>builder()
+                        .code("E30")
+                        .message("중복처리")
+                        .data(e.getMessage())
+                        .build()
+        );
+    }
+    // DB에 회원이 저장되지 않음
+    @ExceptionHandler(UserRegistrationFailedException.class)
+    public ResponseEntity<GlobalResponse<String>> userRegistrationFailedHandle(UserRegistrationFailedException e) {
+        return ResponseEntity.status(500).body(
+                GlobalResponse.<String>builder()
+                        .code("E80")
+                        .message("회원가입 실패")
+                        .data(e.getMessage())
+                        .build()
+        );
+    }
+
+    @ExceptionHandler(DuplicateUserException.class)
+    public ResponseEntity<GlobalResponse<String>> duplicateUserHandle(DuplicateUserException e) {
+        return ResponseEntity.status(409).body(
+                GlobalResponse.<String>builder()
+                        .code("E30")
+                        .message("중복 데이터")
+                        .data(e.getMessage())
+                        .build()
+        );
+    }
+
+    // ----------------------------------------------
+//              공통 에러 (dev에서 정의함)
+    // ----------------------------------------------
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<GlobalResponse<String>> methodArgumentTypeMismatchHandle(MethodArgumentTypeMismatchException e){
         return ResponseEntity.status(400).body(
