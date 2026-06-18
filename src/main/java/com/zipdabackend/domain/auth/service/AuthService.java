@@ -11,6 +11,7 @@ import com.zipdabackend.global.cookie.CookieManager;
 import com.zipdabackend.global.error.custom.*;
 import com.zipdabackend.global.jwt.JwtConfig;
 import com.zipdabackend.global.jwt.JwtProvider;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -53,7 +54,7 @@ public class AuthService {
                                 .userId(user.getUserId())
                                 .email(user.getEmail())
                                 .name(user.getName())
-                                .nick(user.getName())
+                                .nick(user.getNick())
                                 .phone(user.getPhone())
                                 .role(user.getRole())
                                 .createdAt(user.getCreatedAt())
@@ -128,8 +129,18 @@ public class AuthService {
             throw new TokenException("refreshToken이 없습니다.");
         }
         String extractRefreshToken = extractRefreshTokenFromRequest.get();
+        Claims claims = jwtProvider.extractClaims(extractRefreshToken);
 
-        long userId = Long.parseLong(jwtProvider.extractClaims(extractRefreshToken).getSubject());
+        if(!"REFRESH".equals(claims.get("tokenType", String.class))) {
+            throw new TokenException("Refresh Token이 아닙니다.");
+        }
+
+        long userId;
+        try {
+            userId = Long.parseLong(claims.getSubject());
+        } catch (NumberFormatException e) {
+            throw new TokenException("유효하지 않은 subject입니다.");
+        }
 
         User user = userMapper.findByPk(userId);
 

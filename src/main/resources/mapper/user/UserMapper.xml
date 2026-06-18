@@ -32,7 +32,7 @@
             nick = #{nick}
             AND deleted_at IS NULL
     </select>
-    <select id="findByPk">
+    <select id="findByPk" resultMap="UserResultMap">
         SELECT
             *
         FROM user

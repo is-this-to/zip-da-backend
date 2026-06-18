@@ -69,9 +69,4 @@ public class AuthController {
                         .build()
         );
     }
-
-    @DeleteMapping("/admin/auth/sessions")
-    public ResponseEntity<String> test() {
-        return ResponseEntity.status(200).body("굿");
-    }
 }
