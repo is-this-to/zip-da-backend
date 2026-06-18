@@ -1,42 +1,9 @@
-2026-06-16T13:02:51.548+09:00 ERROR 8368 --- [zip-da-backend] [main] o.s.b.d.LoggingFailureAnalysisReporter   : 
-
-***************************
-APPLICATION FAILED TO START
-***************************
-
-Description:
-
-Web server failed to start. Port 8080 was already in use.
-
-Action:
-
-Identify and stop the process that's listening on port 8080 or configure this application to listen on another port.
-
-2026-06-16T13:04:24.779+09:00 ERROR 19848 --- [zip-da-backend] [main] o.s.b.d.LoggingFailureAnalysisReporter   : 
-
-***************************
-APPLICATION FAILED TO START
-***************************
-
-Description:
-
-Web server failed to start. Port 8080 was already in use.
-
-Action:
-
-Identify and stop the process that's listening on port 8080 or configure this application to listen on another port.
-
-2026-06-16T13:08:50.549+09:00 ERROR 9784 --- [zip-da-backend] [main] o.s.b.d.LoggingFailureAnalysisReporter   : 
-
-***************************
-APPLICATION FAILED TO START
-***************************
-
-Description:
-
-Web server failed to start. Port 8080 was already in use.
-
-Action:
-
-Identify and stop the process that's listening on port 8080 or configure this application to listen on another port.
-
+2026-06-18T20:24:51.770+09:00  INFO 19248 --- [msa4-meerkatgram] [main] c.zipdabackend.ZipDaBackendApplication   : Starting ZipDaBackendApplication using Java 17.0.19 with PID 19248 (E:\sulin\workspace\zip-da-backend\build\classes\java\main started by user in E:\sulin\workspace\zip-da-backend)
+2026-06-18T20:24:51.773+09:00  INFO 19248 --- [msa4-meerkatgram] [main] c.zipdabackend.ZipDaBackendApplication   : No active profile set, falling back to 1 default profile: "default"
+2026-06-18T20:24:52.429+09:00  INFO 19248 --- [msa4-meerkatgram] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2026-06-18T20:24:52.437+09:00  INFO 19248 --- [msa4-meerkatgram] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-06-18T20:24:52.438+09:00  INFO 19248 --- [msa4-meerkatgram] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.55]
+2026-06-18T20:24:52.463+09:00  INFO 19248 --- [msa4-meerkatgram] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-06-18T20:24:52.463+09:00  INFO 19248 --- [msa4-meerkatgram] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 664 ms
+2026-06-18T20:24:52.846+09:00  INFO 19248 --- [msa4-meerkatgram] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2026-06-18T20:24:52.851+09:00  INFO 19248 --- [msa4-meerkatgram] [main] c.zipdabackend.ZipDaBackendApplication   : Started ZipDaBackendApplication in 1.385 seconds (process running for 1.766)
