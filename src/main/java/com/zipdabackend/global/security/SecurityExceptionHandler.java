@@ -10,6 +10,7 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
+// security 필터 실행 도중 생긴 401/403 에러를 spring globalExceptionHandler에서 에러처리 할 수 있게 해줌
 @Component
 public class SecurityExceptionHandler implements AuthenticationEntryPoint, AccessDeniedHandler {
     private final HandlerExceptionResolver handlerExceptionResolver;

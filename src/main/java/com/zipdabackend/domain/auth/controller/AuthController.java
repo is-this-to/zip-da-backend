@@ -58,7 +58,7 @@ public class AuthController {
         );
     }
 
-    // accessToken 재발급
+    // Token 재발급
     @PostMapping("/auth/tokens")
     public ResponseEntity<GlobalResponse<AuthResponse>> reissueToken(HttpServletRequest request, HttpServletResponse response) {
         return ResponseEntity.status(200).body(
@@ -68,5 +68,10 @@ public class AuthController {
                         .data(authService.reissueToken(request, response))
                         .build()
         );
+    }
+
+    @DeleteMapping("/admin/auth/sessions")
+    public ResponseEntity<String> test() {
+        return ResponseEntity.status(200).body("굿");
     }
 }

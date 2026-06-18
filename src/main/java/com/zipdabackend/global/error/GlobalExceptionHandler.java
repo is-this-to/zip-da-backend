@@ -4,6 +4,8 @@ import com.zipdabackend.global.error.custom.*;
 import com.zipdabackend.global.response.GlobalResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -21,6 +23,31 @@ public class GlobalExceptionHandler {
     // ------------------------------------------
 //              한지윤 에러 모음
     // ------------------------------------------
+
+    // ---------------- security 에러 -------------------
+    // 인증 실패: 토큰 없음, 로그인 안 함
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<GlobalResponse<String>> authenticationHandle(AuthenticationException e) {
+        return ResponseEntity.status(401).body(
+                GlobalResponse.<String>builder()
+                        .code("E02")
+                        .message("인증이 필요합니다.")
+                        .data(e.getMessage())
+                        .build()
+        );
+    }
+
+    // 인가 실패: 로그인은 했지만 권한 없음
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<GlobalResponse<String>> accessDeniedHandle(AccessDeniedException e) {
+        return ResponseEntity.status(403).body(
+                GlobalResponse.<String>builder()
+                        .code("E03")
+                        .message("접근 권한이 없습니다.")
+                        .data(e.getMessage())
+                        .build()
+        );
+    }
 
     // ---------------- 로그인 에러 ------------------
     //  이메일이 없거나 비밀번호가 틀림

@@ -27,7 +27,7 @@ public class JwtProvider {
         this.cookieManager = cookieManager;
     }
 
-    private String generateToken(User user, long ttl) {
+    private String generateToken(User user, long ttl, String TypeOfToken) {
         Date now = new Date();
         return Jwts.builder()
                 .header() // jwt 헤더 설정 JwtBuilder -> BuilderHeader 객체로
@@ -36,16 +36,17 @@ public class JwtProvider {
                 .subject(String.valueOf(user.getUserId()))
                 .issuer(jwtConfig.issuer())
                 .expiration(new Date(now.getTime() + ttl)) // 밀리초
-                .claim("role", user.getRole())
+                .claim("role", user.getRole().name())
+                .claim("tokenType", TypeOfToken) // accessToken인지 refreshToken인지 표시
                 .signWith(secretKey) // secretKey로 jwt 서명
                 .compact(); // JWT를 최종 문자열로 만든다 -> Header.Payload.Signature 형태로 만듦
     }
 
     public String generateAccessToken(User user) {
-        return this.generateToken(user, jwtConfig.accessTokenExpiry());
+        return this.generateToken(user, jwtConfig.accessTokenExpiry(), "ACCESS");
     }
     public String generateRefreshToken(User user) {
-        return this.generateToken(user, jwtConfig.refreshTokenExpiry());
+        return this.generateToken(user, jwtConfig.refreshTokenExpiry(), "REFRESH");
     }
 
     // request에서 cookie에 있는 refreshToken 추출

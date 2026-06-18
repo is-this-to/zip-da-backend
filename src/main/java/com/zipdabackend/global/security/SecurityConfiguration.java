@@ -1,6 +1,7 @@
 package com.zipdabackend.global.security;
 
 import com.zipdabackend.global.config.CorsConfig;
+import com.zipdabackend.global.constant.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -91,12 +92,16 @@ public class SecurityConfiguration {
                 // UsernamePasswordAuthenticationFilter보다 먼저 TokenAuthenticationFilter를 실행해라.
                 .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // 필터 등록
                 .authorizeHttpRequests(req ->
-                        // 리퀘스트에 대한 권한 설정
-                        req.requestMatchers(HttpMethod.GET, SecurityUrlRegistry.AUTH_REQUIRED_GET_URLS).authenticated()
-                                .requestMatchers(HttpMethod.DELETE, SecurityUrlRegistry.AUTH_REQUIRED_DELETE_URLS).authenticated()
-                                .requestMatchers(HttpMethod.PATCH, SecurityUrlRegistry.AUTH_REQUIRED_PATCH_URLS).authenticated()
-                                .requestMatchers(HttpMethod.POST, SecurityUrlRegistry.AUTH_REQUIRED_POST_URLS).authenticated()
-                                .requestMatchers(HttpMethod.PUT, SecurityUrlRegistry.AUTH_REQUIRED_PUT_URLS).authenticated()
+                        // 요청에 대한 권한 설정
+                        req.requestMatchers(HttpMethod.GET, SecurityUrlRegistry.USER_AGENT_GET_URLS).hasAnyRole(UserRole.USER.name(), UserRole.AGENT.name())
+                                .requestMatchers(HttpMethod.DELETE, SecurityUrlRegistry.USER_AGENT_DELETE_URLS).hasAnyRole(UserRole.USER.name(), UserRole.AGENT.name())
+                                .requestMatchers(HttpMethod.PATCH, SecurityUrlRegistry.USER_AGENT_PATCH_URLS).hasAnyRole(UserRole.USER.name(), UserRole.AGENT.name())
+                                .requestMatchers(HttpMethod.POST, SecurityUrlRegistry.USER_AGENT_POST_URLS).hasAnyRole(UserRole.USER.name(), UserRole.AGENT.name())
+                                .requestMatchers(HttpMethod.POST, SecurityUrlRegistry.USER_POST_URLS).hasRole(UserRole.USER.name())
+                                .requestMatchers(HttpMethod.GET, SecurityUrlRegistry.USER_GET_URLS).hasRole(UserRole.USER.name())
+                                .requestMatchers(HttpMethod.DELETE, SecurityUrlRegistry.ADMIN_DELETE_URLS).hasRole(UserRole.ADMIN.name())
+                                .requestMatchers(HttpMethod.GET, SecurityUrlRegistry.ADMIN_GET_URLS).hasRole(UserRole.ADMIN.name())
+                                .requestMatchers(HttpMethod.PATCH, SecurityUrlRegistry.ADMIN_PATCH_URLS).hasRole(UserRole.ADMIN.name())
                                 .anyRequest().permitAll() // 그 외는 인증 불필요
                 )
                 // 예외가 발생했을 때 어떻게 응답?
@@ -107,7 +112,6 @@ public class SecurityConfiguration {
                         // 로그인은 했지만 권한이 부족할 때 실행됨
                         .accessDeniedHandler(securityExceptionHandler)
                 )
-
                 .build();
     }
 }
