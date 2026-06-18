@@ -32,5 +32,12 @@
             nick = #{nick}
             AND deleted_at IS NULL
     </select>
-
+    <select id="findByPk">
+        SELECT
+            *
+        FROM user
+        WHERE
+            user_id = #{userId}
+          AND deleted_at IS NULL
+    </select>
 </mapper>

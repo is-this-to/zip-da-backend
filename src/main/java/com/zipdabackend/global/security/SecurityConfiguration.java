@@ -75,9 +75,9 @@ public class SecurityConfiguration {
     // else if fail -> SecurityExceptionHandler (commence or handle) -> HandlerExceptionResolver
     @Bean
     public SecurityFilterChain filterChain(
-            HttpSecurity http // Spring security 설정을 체인 방식으로 작성하게 해주는 객체
-            //SecurityExceptionHandler securityExceptionHandler,
-            //TokenAuthenticationFilter tokenAuthenticationFilter
+            HttpSecurity http, // Spring security 설정을 체인 방식으로 작성하게 해주는 객체
+            SecurityExceptionHandler securityExceptionHandler,
+            TokenAuthenticationFilter tokenAuthenticationFilter
     ) throws Exception {
         return http
                 .sessionManagement(session ->
@@ -89,7 +89,7 @@ public class SecurityConfiguration {
                 .cors(cors -> cors.configurationSource(this.corsConfigurationSource())) // Cors 설정 추가
                 // TokenAuthenticationFilter를 Spring Security 필터 체인에 등록함
                 // UsernamePasswordAuthenticationFilter보다 먼저 TokenAuthenticationFilter를 실행해라.
-                //.addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // 필터 등록
+                .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // 필터 등록
                 .authorizeHttpRequests(req ->
                         // 리퀘스트에 대한 권한 설정
                         req.requestMatchers(HttpMethod.GET, SecurityUrlRegistry.AUTH_REQUIRED_GET_URLS).authenticated()
@@ -99,15 +99,15 @@ public class SecurityConfiguration {
                                 .requestMatchers(HttpMethod.PUT, SecurityUrlRegistry.AUTH_REQUIRED_PUT_URLS).authenticated()
                                 .anyRequest().permitAll() // 그 외는 인증 불필요
                 )
-                /* 예외가 발생했을 때 어떻게 응답?
+                // 예외가 발생했을 때 어떻게 응답?
                 .exceptionHandling(e ->
                         e
-                                // 인증이 안 된 사용자가 인증이 필요한 API에 접근할 때 실행됨
-                                .authenticationEntryPoint(securityExceptionHandler)
-                                // 로그인은 했지만 권한이 부족할 때 실행됨
-                                .accessDeniedHandler(securityExceptionHandler)
+                        // 인증이 안 된 사용자가 인증이 필요한 API에 접근할 때 실행됨
+                        .authenticationEntryPoint(securityExceptionHandler)
+                        // 로그인은 했지만 권한이 부족할 때 실행됨
+                        .accessDeniedHandler(securityExceptionHandler)
                 )
-                */
+
                 .build();
     }
 }

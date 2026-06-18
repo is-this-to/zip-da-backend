@@ -7,4 +7,5 @@ import org.apache.ibatis.annotations.Mapper;
 public interface UserMapper {
     User findByEmail(String email);
     User findByNick(String nick);
+    User findByPk(long userId);
 }

@@ -34,4 +34,12 @@
        )
     </insert>
 
+    <update id="updateRefreshToken">
+        UPDATE user
+        SET
+            refresh_token = #{refreshToken},
+            updated_at = now()
+        WHERE user_id = #{userId}
+    </update>
+
 </mapper>

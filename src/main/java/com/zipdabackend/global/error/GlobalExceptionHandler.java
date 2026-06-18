@@ -1,9 +1,6 @@
 package com.zipdabackend.global.error;
 
-import com.zipdabackend.global.error.custom.DuplicateEmailException;
-import com.zipdabackend.global.error.custom.DuplicateNickException;
-import com.zipdabackend.global.error.custom.DuplicateUserException;
-import com.zipdabackend.global.error.custom.UserRegistrationFailedException;
+import com.zipdabackend.global.error.custom.*;
 import com.zipdabackend.global.response.GlobalResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +21,47 @@ public class GlobalExceptionHandler {
     // ------------------------------------------
 //              한지윤 에러 모음
     // ------------------------------------------
+
+    // ---------------- 로그인 에러 ------------------
+    //  이메일이 없거나 비밀번호가 틀림
+    @ExceptionHandler(NotRegisteredException.class)
+    public ResponseEntity<GlobalResponse<String>> NotRegisteredHandle(NotRegisteredException e) {
+        return ResponseEntity.status(401).body(
+                GlobalResponse.<String>builder()
+                        .code("E01")
+                        .message("사용자 입력 에러")
+                        .data(e.getMessage())
+                        .build()
+        );
+    }
+    // 로그인 인증은 성공했지만 토큰 생성, 토큰 DB 저장, 인증 응답 생성 과정에서 실패
+    @ExceptionHandler(AuthenticationFailedException.class)
+    public  ResponseEntity<GlobalResponse<String>> AuthenticationFailedHandle(AuthenticationFailedException e) {
+        return ResponseEntity.status(500).body(
+                GlobalResponse.<String>builder()
+                        .code("E05")
+                        .message("로그인 인증 저장 에러")
+                        .data(e.getMessage())
+                        .build()
+        );
+    }
+
+    // --------------
+
+    // --------------token 재발급 에러 모음 ------------
+    @ExceptionHandler(TokenException.class)
+    public ResponseEntity<GlobalResponse<String>> TokenHandle(TokenException e) {
+        return ResponseEntity.status(401).body(
+                GlobalResponse.<String>builder()
+                        .code("E04")
+                        .message("토큰 문제 발생")
+                        .data(e.getMessage())
+                        .build()
+        );
+    }
+
+    // ------------- 회원가입 에러 모음 -----------------
+    // 중복 이메일 회원
     @ExceptionHandler(DuplicateEmailException.class)
     public ResponseEntity<GlobalResponse<String>> duplicateEmailHandle(DuplicateEmailException e) {
         return ResponseEntity.status(409).body(
@@ -34,6 +72,7 @@ public class GlobalExceptionHandler {
                         .build()
         );
     }
+    // 중복 닉네임 회원
     @ExceptionHandler(DuplicateNickException.class)
     public ResponseEntity<GlobalResponse<String>> duplicateNickHandle(DuplicateNickException e) {
         return ResponseEntity.status(409).body(
@@ -55,7 +94,7 @@ public class GlobalExceptionHandler {
                         .build()
         );
     }
-
+    // User의 유니크 속성 중 중복된게 있음
     @ExceptionHandler(DuplicateUserException.class)
     public ResponseEntity<GlobalResponse<String>> duplicateUserHandle(DuplicateUserException e) {
         return ResponseEntity.status(409).body(

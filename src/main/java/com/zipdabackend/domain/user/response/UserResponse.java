@@ -11,6 +11,5 @@ public record UserResponse(
     , String nick
     , String phone
     , UserRole role
-    , String profile
     , String createdAt
 ) {}
