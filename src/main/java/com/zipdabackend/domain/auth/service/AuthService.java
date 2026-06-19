@@ -32,8 +32,8 @@ public class AuthService {
     private final CookieManager cookieManager;
     private final JwtConfig jwtConfig;
 
-    // 로그인 or 토큰 재발급
-    private AuthResponse generateAuthentication(HttpServletResponse response, User user) {
+    // 토큰 재발급
+    private AuthResponse<UserResponse> generateAuthentication(HttpServletResponse response, User user) {
         // 토큰 생성
         String newAccessToken = jwtProvider.generateAccessToken(user);
         String newRefreshToken = jwtProvider.generateRefreshToken(user);
@@ -47,9 +47,9 @@ public class AuthService {
         // 새로 만든 refreshToken response 헤더에 저장, refreshToken은 reissue할때만 보냄
         cookieManager.setCookie(response, jwtConfig.refreshTokenCookieName(), newRefreshToken, jwtConfig.refreshTokenCookieExpiry(), jwtConfig.refreshTokenCookiePath());
 
-        return AuthResponse.builder()
+        return AuthResponse.<UserResponse>builder()
                 .accessToken(newAccessToken)
-                .user(
+                .principal(
                         UserResponse.builder()
                                 .userId(user.getUserId())
                                 .email(user.getEmail())
@@ -64,7 +64,7 @@ public class AuthService {
     }
 
     // user 로그인
-    public AuthResponse login(LoginRequest loginRequest, HttpServletResponse response) {
+    public AuthResponse<UserResponse> login(LoginRequest loginRequest, HttpServletResponse response) {
         User findByEmailUser = userMapper.findByEmail(loginRequest.email());
 
         if(findByEmailUser == null) {
@@ -76,6 +76,7 @@ public class AuthService {
         }
         return this.generateAuthentication(response, findByEmailUser);
     }
+
     //user 로그아웃
     public void logout(HttpServletResponse response, Long userId) {
         User user = userMapper.findByPk(userId);
@@ -123,7 +124,7 @@ public class AuthService {
     }
 
     // 토큰 재발급
-    public AuthResponse reissueToken (HttpServletRequest request, HttpServletResponse response) {
+    public AuthResponse<UserResponse> reissueToken (HttpServletRequest request, HttpServletResponse response) {
         Optional<String> extractRefreshTokenFromRequest = jwtProvider.extractRefreshToken(request);
         if(extractRefreshTokenFromRequest.isEmpty()) {
             throw new TokenException("refreshToken이 없습니다.");

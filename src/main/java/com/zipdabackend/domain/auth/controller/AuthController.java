@@ -4,6 +4,7 @@ import com.zipdabackend.domain.auth.request.LoginRequest;
 import com.zipdabackend.domain.auth.request.RegistrationRequest;
 import com.zipdabackend.domain.auth.response.AuthResponse;
 import com.zipdabackend.domain.auth.service.AuthService;
+import com.zipdabackend.domain.user.response.UserResponse;
 import com.zipdabackend.global.response.GlobalResponse;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,9 +24,9 @@ public class AuthController {
 
     // user 로그인
     @PostMapping("/auth/sessions")
-    public ResponseEntity<GlobalResponse<AuthResponse>> login(@Valid @RequestBody LoginRequest loginRequest, HttpServletResponse response) {
+    public ResponseEntity<GlobalResponse<AuthResponse<UserResponse>>> login(@Valid @RequestBody LoginRequest loginRequest, HttpServletResponse response) {
         return ResponseEntity.status(200).body(
-                GlobalResponse.<AuthResponse>builder()
+                GlobalResponse.<AuthResponse<UserResponse>>builder()
                         .code("00")
                         .message("로그인이 정상 처리 됐습니다.")
                         .data(authService.login(loginRequest, response))
@@ -60,9 +61,9 @@ public class AuthController {
 
     // Token 재발급
     @PostMapping("/auth/tokens")
-    public ResponseEntity<GlobalResponse<AuthResponse>> reissueToken(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<GlobalResponse<AuthResponse<UserResponse>>> reissueToken(HttpServletRequest request, HttpServletResponse response) {
         return ResponseEntity.status(200).body(
-                GlobalResponse.<AuthResponse>builder()
+                GlobalResponse.<AuthResponse<UserResponse>>builder()
                         .code("00")
                         .message("정상 처리 됐습니다.")
                         .data(authService.reissueToken(request, response))

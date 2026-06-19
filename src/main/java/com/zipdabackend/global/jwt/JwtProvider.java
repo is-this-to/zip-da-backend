@@ -1,6 +1,8 @@
 package com.zipdabackend.global.jwt;
 
+import com.zipdabackend.domain.admin.entity.Admin;
 import com.zipdabackend.domain.user.entity.User;
+import com.zipdabackend.global.constant.UserRole;
 import com.zipdabackend.global.cookie.CookieManager;
 import com.zipdabackend.global.error.custom.TokenException;
 import io.jsonwebtoken.*;
@@ -27,6 +29,21 @@ public class JwtProvider {
         this.cookieManager = cookieManager;
     }
 
+    private String generateAdminAccessToken(Admin admin, long ttl) {
+        Date now = new Date();
+        return Jwts.builder()
+                .header() // jwt 헤더 설정 JwtBuilder -> BuilderHeader 객체로
+                .type(jwtConfig.type())
+                .and() // 헤더 설정 끝 -> 다움부터 payload 설정 ->  BuilderHeader 객체에서 JwtBuilder 객체로
+                .subject(String.valueOf(admin.getAdminId()))
+                .issuer(jwtConfig.issuer())
+                .expiration(new Date(now.getTime() + ttl)) // 밀리초
+                .claim("role", UserRole.ADMIN.name())
+                .claim("tokenType", "ACCESS") // accessToken인지 refreshToken인지 표시
+                .signWith(secretKey) // secretKey로 jwt 서명
+                .compact(); // JWT를 최종 문자열로 만든다 -> Header.Payload.Signature 형태로 만듦
+    }
+
     private String generateToken(User user, long ttl, String tokenType) {
         Date now = new Date();
         return Jwts.builder()
@@ -47,6 +64,9 @@ public class JwtProvider {
     }
     public String generateRefreshToken(User user) {
         return this.generateToken(user, jwtConfig.refreshTokenExpiry(), "REFRESH");
+    }
+    public String generateAdminAccessToken(Admin admin) {
+        return this.generateAdminAccessToken(admin, jwtConfig.adminAccessTokenExpiry());
     }
 
     // request에서 cookie에 있는 refreshToken 추출

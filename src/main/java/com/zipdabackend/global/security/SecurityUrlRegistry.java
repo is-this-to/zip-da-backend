@@ -42,6 +42,10 @@ public class SecurityUrlRegistry {
             "/api/saved-searches/*",
     };
 
+    // ------------------ AGENT만 가능한 기능(USERㄴㄴ) ------------------
+    public static final String[] AGENT_POST_URLS = {
+    };
+
     // ------------------ USER만 가능한 기능(AGENTㄴㄴ) ------------------
     public static final String[] USER_POST_URLS = {
             "/api/agents"

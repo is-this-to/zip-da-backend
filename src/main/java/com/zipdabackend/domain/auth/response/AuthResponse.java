@@ -1,11 +1,9 @@
 package com.zipdabackend.domain.auth.response;
 
-import com.zipdabackend.domain.user.response.UserResponse;
 import lombok.Builder;
 
 @Builder
-public record AuthResponse(
+public record AuthResponse<T>(
         String accessToken
-        , UserResponse user
-        ) {
-}
+        , T principal
+) { }

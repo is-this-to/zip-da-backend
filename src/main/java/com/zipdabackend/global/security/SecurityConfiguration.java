@@ -100,6 +100,7 @@ public class SecurityConfiguration {
                                 .requestMatchers(HttpMethod.POST, SecurityUrlRegistry.USER_POST_URLS).hasRole(UserRole.USER.name())
                                 .requestMatchers(HttpMethod.GET, SecurityUrlRegistry.USER_GET_URLS).hasRole(UserRole.USER.name())
                                 .requestMatchers(HttpMethod.DELETE, SecurityUrlRegistry.ADMIN_DELETE_URLS).hasRole(UserRole.ADMIN.name())
+                                .requestMatchers(HttpMethod.POST, SecurityUrlRegistry.AGENT_POST_URLS).hasRole(UserRole.AGENT.name())
                                 .requestMatchers(HttpMethod.GET, SecurityUrlRegistry.ADMIN_GET_URLS).hasRole(UserRole.ADMIN.name())
                                 .requestMatchers(HttpMethod.PATCH, SecurityUrlRegistry.ADMIN_PATCH_URLS).hasRole(UserRole.ADMIN.name())
                                 .anyRequest().permitAll() // 그 외는 인증 불필요

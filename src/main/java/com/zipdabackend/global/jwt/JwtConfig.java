@@ -8,6 +8,7 @@ public record JwtConfig(
         String issuer,
         String type,
         int accessTokenExpiry,
+        int adminAccessTokenExpiry,
         int refreshTokenExpiry,
         String refreshTokenCookieName,
         int refreshTokenCookieExpiry,
