@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zipdabackend.domain.admin.mapper.AdminMapper">
+    <resultMap id="AdminResultMap" type="com.zipdabackend.domain.admin.entity.Admin">
+        <id column="admin_id" property="adminId" />
+        <result column="admin_code" property="adminCode" />
+        <result column="password" property="password" />
+        <result column="name" property="name" />
+        <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
+        <result column="deleted_at" property="deletedAt" />
+    </resultMap>
+
+    <select id="findbyCode" resultMap="AdminResultMap">
+        SELECT
+            *
+        FROM admin
+        WHERE
+            admin_code = #{adminCode}
+            AND deleted_at IS NULL
+    </select>
+
+</mapper>
