@@ -1,6 +1,6 @@
-package com.zipdabackend.global.errors;
+package com.zipdabackend.global.error;
 
-import com.zipdabackend.global.responses.GlobalResponse;
+import com.zipdabackend.global.response.GlobalResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
