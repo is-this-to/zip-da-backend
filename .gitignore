@@ -10,6 +10,7 @@ storage/
 /README.md
 /1st-doc/
 /logs/
+/schema.v00/
 
 ### STS ###
 .apt_generated
