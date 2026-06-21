@@ -7,3 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 public interface AdminMapper {
     Admin findbyCode(String adminCode);
 }
+
+
+
+

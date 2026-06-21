@@ -56,11 +56,32 @@
     </select>
 
     <!-- 마이페이지 찜 카드 목록 조회 -->
-    <select id="findCardsByUserId" resultType="com.zipdabackend.domain.bookmark.response.BookmarkCardResponse">
-        SELECT *
-        FROM bookmark
-        WHERE user_id = #{userId}
-        ORDER BY created_at DESC
+    <select id="findCardsByUserId"
+            resultType="com.zipdabackend.domain.bookmark.response.BookmarkCardResponse">
+        SELECT
+            p.property_id AS propertyId,
+            pi.image_url AS thumbnailUrl,
+            p.property_type AS propertyType,
+            p.transaction_type AS transactionType,
+            p.price AS price,
+            p.deposit AS deposit,
+            p.monthly_rent AS monthlyRent,
+            p.area_m2 AS areaM2,
+            p.floor AS floor,
+            p.maintenance_fee AS maintenanceFee,
+            CONCAT(r.sido, ' ', r.sigungu, ' ', r.dong) AS regionName
+        FROM bookmark b
+                 JOIN property p
+                      ON b.property_id = p.property_id
+                 LEFT JOIN region r
+                           ON p.region_id = r.region_id
+                 LEFT JOIN property_image pi
+                           ON p.property_id = pi.property_id
+                               AND pi.is_thumbnail = 1
+                               AND pi.deleted_at IS NULL
+        WHERE b.user_id = #{userId}
+          AND p.deleted_at IS NULL
+        ORDER BY b.created_at DESC
     </select>
 
 </mapper>

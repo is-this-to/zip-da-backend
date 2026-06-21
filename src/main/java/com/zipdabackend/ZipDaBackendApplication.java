@@ -7,7 +7,7 @@ import org.mybatis.spring.annotation.MapperScan;
 
 @SpringBootApplication
 @ConfigurationPropertiesScan
-@MapperScan("com.zipdabackend.domain.bookmark.mapper")
+@MapperScan("com.zipdabackend.domain.**.mapper")
 public class ZipDaBackendApplication {
 
     public static void main(String[] args) {

@@ -16,29 +16,30 @@ import java.util.List;
 public class BookmarkService {
   private final BookmarkMapper bookmarkMapper;
 
-  public BookmarkResponse toggleBookmark(BookmarkCreateRequest bookmarkCreateRequest) {
+  public BookmarkResponse toggleBookmark(
+    Long userId, BookmarkCreateRequest bookmarkCreateRequest) {
+    Long propertyId = bookmarkCreateRequest.propertyId();
+    Bookmark bookmark = Bookmark.builder()
+        .userId(userId)
+        .propertyId(propertyId)
+        .build();
 
     Bookmark existingBookmark =
-        bookmarkMapper.findByUserIdAndPropertyId(bookmarkCreateRequest);
+        bookmarkMapper.findByUserIdAndPropertyId(bookmark);
     boolean isFavorite;
 
     if (existingBookmark != null) {
-      bookmarkMapper.deleteByUserIdAndPropertyId(bookmarkCreateRequest);
+      bookmarkMapper.deleteByUserIdAndPropertyId(bookmark);
       isFavorite = false;
     } else {
-      Bookmark bookmark = Bookmark.builder()
-          .userId(bookmarkCreateRequest.userId())
-          .propertyId(bookmarkCreateRequest.propertyId())
-          .build();
-
       bookmarkMapper.insertBookmark(bookmark);
       isFavorite = true;
     }
     long favoriteCount =
-        bookmarkMapper.countByPropertyId(bookmarkCreateRequest.propertyId());
+        bookmarkMapper.countByPropertyId(propertyId);
 
     return new BookmarkResponse(
-        bookmarkCreateRequest.propertyId(),
+        propertyId,
         isFavorite,
         favoriteCount
     );
