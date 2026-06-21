@@ -1,30 +1,34 @@
 package com.zipdabackend.domain.bookmark.controller;
 
 import com.zipdabackend.domain.bookmark.request.BookmarkCreateRequest;
-import com.zipdabackend.domain.bookmark.entity.Bookmark;
 import com.zipdabackend.domain.bookmark.response.BookmarkResponse;
 import com.zipdabackend.domain.bookmark.service.BookmarkService;
+import com.zipdabackend.global.response.GlobalResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
-@RequiredArgsConstructor
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api")
 public class BookmarkController {
-    private final BookmarkService bookmarkService;
+  private final BookmarkService bookmarkService;
 
-    @PostMapping("/bookmarks")
-    public boolean toggleBookmark(@RequestBody BookmarkCreateRequest req) {
-        return bookmarkService.toggleBookmark(
-                req.userId(),
-                req.propertyId()
-        );
-    }
-
-    @GetMapping("/bookmarks")
-    public List<Bookmark> getBookmarks(@RequestParam Long userId) {
-        return bookmarkService.getUserBookmarks(userId);
-    }
+  @PostMapping("/bookmarks/toggle")
+  public ResponseEntity<GlobalResponse<BookmarkResponse>> toggleBookmark(
+      @RequestBody BookmarkCreateRequest bookmarkCreateRequest
+  ) {
+    BookmarkResponse bookmarkResponse =
+        bookmarkService.toggleBookmark(bookmarkCreateRequest);
+    return ResponseEntity.ok(
+        GlobalResponse.<BookmarkResponse>builder()
+            .code("00")
+            .message("찜 상태가 변경되었습니다.")
+            .data(bookmarkResponse)
+            .build()
+    );
+  }
 }

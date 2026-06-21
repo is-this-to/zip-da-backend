@@ -11,33 +11,56 @@
         <result column="created_at" property="createdAt"/>
 
     </resultMap>
-
-    <select id="findByUserIdAndPropertyId" resultType="long">
-    SELECT count(1)
+<!-- 이미 찜했는지 조회-->
+    <select id="findByUserIdAndPropertyId" resultMap="bookmarkResultMap">
+    SELECT
+        bookmark_id,
+        user_id,
+        property_id,
+        created_at
     FROM bookmark
     WHERE
         user_id = #{userId}
     AND property_id =#{propertyId}
    </select>
 
+    <!-- 찜목록 조회-->
     <select id="findByUserId" resultMap="bookmarkResultMap">
-        SELECT *
+        SELECT
+            bookmark_id,
+            user_id,
+            property_id,
+            created_at
         FROM bookmark
         WHERE user_id = #{userId}
         ORDER BY created_at DESC
     </select>
 
-
+    <!-- 찜추가-->
     <insert id="insertBookmark">
         INSERT INTO bookmark (user_id, property_id, created_at)
         VALUES (#{userId}, #{propertyId}, NOW())
     </insert>
 
-    <delete id="deleteBookmark" >
+    <!-- 찜삭제  -->
+    <delete id="deleteByUserIdAndPropertyId" >
         DELETE FROM bookmark
         WHERE user_id = #{userId} AND property_id = #{propertyId}
     </delete>
 
+    <!-- 특정 매물의 총 찜 개수 조회 -->
+    <select id="countByPropertyId" resultType="long">
+        SELECT COUNT(1)
+        FROM bookmark
+        WHERE property_id = #{propertyId}
+    </select>
 
+    <!-- 마이페이지 찜 카드 목록 조회 -->
+    <select id="findCardsByUserId" resultType="com.zipdabackend.domain.bookmark.response.BookmarkCardResponse">
+        SELECT *
+        FROM bookmark
+        WHERE user_id = #{userId}
+        ORDER BY created_at DESC
+    </select>
 
 </mapper>
