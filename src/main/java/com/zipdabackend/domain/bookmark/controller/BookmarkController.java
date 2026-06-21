@@ -28,7 +28,7 @@ public class BookmarkController {
     Long userId = Long.parseLong(claims.getSubject());
 
     BookmarkResponse bookmarkResponse =
-        bookmarkService.toggleBookmark(userId,bookmarkCreateRequest);
+        bookmarkService.toggleBookmark(userId, bookmarkCreateRequest);
 
     return ResponseEntity.ok(
         GlobalResponse.<BookmarkResponse>builder()
@@ -38,14 +38,17 @@ public class BookmarkController {
             .build()
     );
   }
-  @GetMapping("/bookmarks")
+  //SecurityUrlRegistry에 등록된주소
+  @GetMapping("/users/me/bookmarks")
   public ResponseEntity<GlobalResponse<List<BookmarkCardResponse>>> getUserBookmarkCards(
-     @AuthenticationPrincipal Claims claims
-  ) { Long userId = Long.parseLong(claims.getSubject());  // JWT subject에서 로그인한 userId 꺼내기
+      @AuthenticationPrincipal Claims claims
+  ) {
+    Long userId = Long.parseLong(claims.getSubject());  // JWT subject에서 로그인한 userId 꺼내기
 
     List<BookmarkCardResponse> bookmarkCards =
         bookmarkService.getUserBookmarkCards(userId);
     // Service에게 userId가 찜한 카드 목록 조회를 맡김
+
 
     return ResponseEntity.ok(
         GlobalResponse.<List<BookmarkCardResponse>>builder()
@@ -55,6 +58,4 @@ public class BookmarkController {
             .build()
     );
   }
-}
-
-
+  }

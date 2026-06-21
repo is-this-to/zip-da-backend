@@ -1,7 +1,6 @@
 package com.zipdabackend.domain.bookmark.mapper;
 
 import com.zipdabackend.domain.bookmark.entity.Bookmark;
-import com.zipdabackend.domain.bookmark.request.BookmarkCreateRequest;
 import com.zipdabackend.domain.bookmark.response.BookmarkCardResponse;
 
 import java.util.List;
