@@ -1,6 +1,8 @@
 package com.zipdabackend.global.error;
 
-import com.zipdabackend.global.error.custom.*;
+import com.zipdabackend.global.error.custom.agent.AgentApplicationAlreadyExistsException;
+import com.zipdabackend.global.error.custom.agent.AgentApplicationFailedException;
+import com.zipdabackend.global.error.custom.auth.*;
 import com.zipdabackend.global.response.GlobalResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -127,6 +129,30 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(409).body(
                 GlobalResponse.<String>builder()
                         .code("E30")
+                        .message("중복 데이터")
+                        .data(e.getMessage())
+                        .build()
+        );
+    }
+
+    // ----------------공인중개사 인증 에러-------------
+    @ExceptionHandler(AgentApplicationAlreadyExistsException.class)
+    public ResponseEntity<GlobalResponse<String>> AgentApplicationAlreadyExistsHandle(AgentApplicationAlreadyExistsException e) {
+        return ResponseEntity.status(409).body(
+                GlobalResponse.<String>builder()
+                        .code("E41")
+                        .message("중복 데이터")
+                        .data(e.getMessage())
+                        .build()
+        );
+    }
+
+    // 공인중개사 인증 DB 올리기 실패
+    @ExceptionHandler(AgentApplicationFailedException.class)
+    public ResponseEntity<GlobalResponse<String>> AgentApplicationFailedHandle(AgentApplicationFailedException e) {
+        return ResponseEntity.status(500).body(
+                GlobalResponse.<String>builder()
+                        .code("E80")
                         .message("중복 데이터")
                         .data(e.getMessage())
                         .build()

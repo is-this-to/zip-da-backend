@@ -8,7 +8,7 @@ import com.zipdabackend.domain.user.entity.User;
 import com.zipdabackend.domain.user.mapper.UserMapper;
 import com.zipdabackend.domain.user.response.UserResponse;
 import com.zipdabackend.global.cookie.CookieManager;
-import com.zipdabackend.global.error.custom.*;
+import com.zipdabackend.global.error.custom.auth.*;
 import com.zipdabackend.global.jwt.JwtConfig;
 import com.zipdabackend.global.jwt.JwtProvider;
 import io.jsonwebtoken.Claims;

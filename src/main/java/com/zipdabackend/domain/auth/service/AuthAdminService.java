@@ -6,9 +6,8 @@ import com.zipdabackend.domain.admin.response.AdminResponse;
 import com.zipdabackend.domain.auth.request.AdminLoginRequest;
 import com.zipdabackend.domain.auth.response.AuthResponse;
 import com.zipdabackend.global.constant.UserRole;
-import com.zipdabackend.global.error.custom.NotRegisteredException;
+import com.zipdabackend.global.error.custom.auth.NotRegisteredException;
 import com.zipdabackend.global.jwt.JwtProvider;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,7 +20,7 @@ public class AuthAdminService {
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
 
-    private AuthResponse<AdminResponse> generateAdminAuthentication(HttpServletResponse response, Admin admin) {
+    private AuthResponse<AdminResponse> generateAdminAuthentication(Admin admin) {
         String newAccessToken = jwtProvider.generateAdminAccessToken(admin);
         return AuthResponse.<AdminResponse>builder()
                 .accessToken(newAccessToken)
@@ -36,7 +35,7 @@ public class AuthAdminService {
     }
 
 
-    public AuthResponse<AdminResponse> loginAdmin(HttpServletResponse response, AdminLoginRequest adminLoginRequest) {
+    public AuthResponse<AdminResponse> loginAdmin(AdminLoginRequest adminLoginRequest) {
         Admin findByEmailAdmin = adminMapper.findbyCode(adminLoginRequest.adminCode());
 
         if(findByEmailAdmin == null) {
@@ -46,6 +45,6 @@ public class AuthAdminService {
         if(!passwordEncoder.matches(adminLoginRequest.password(), findByEmailAdmin.getPassword())) {
             throw new NotRegisteredException("관리자 코드 또는 비밀번호가 일치하지 않습니다.");
         }
-        return this.generateAdminAuthentication(response, findByEmailAdmin);
+        return this.generateAdminAuthentication(findByEmailAdmin);
     }
 }
