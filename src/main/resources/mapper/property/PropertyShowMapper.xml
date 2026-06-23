@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zipdabackend.domain.property.mapper.PropertyShowMapper">
+    <resultMap id="PropertyShowResponseMap" type="com.zipdabackend.domain.property.response.PropertyShowResponse">
+        <id column="property_id" property="propertyId" />
+        <result column="user_id" property="userId" />
+        <result column="description" property="description" />
+        <result column="property_type" property="propertyType" />
+        <result column="apartment_id" property="apartmentId" />
+        <result column="transaction_type" property="transactionType" />
+        <result column="price" property="price" />
+        <result column="deposit" property="deposit" />
+        <result column="monthly_rent" property="monthlyRent" />
+        <result column="maintenance_fee" property="maintenanceFee" />
+        <result column="region_id" property="regionId" />
+        <result column="detail_address" property="detailAddress" />
+        <result column="area_m2" property="areaM2" />
+        <result column="room_count" property="roomCount" />
+        <result column="bathroom_count" property="bathroomCount" />
+        <result column="floor" property="floor" />
+        <result column="move_in_date" property="moveInDate" />
+        <result column="source_type" property="sourceType" />
+        <result column="status" property="status" />
+        <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
+        <result column="deleted_at" property="deletedAt" />
+    </resultMap>
+
+    <resultMap id="PropertyOptionDtoMap" type="com.zipdabackend.domain.property.response.PropertyOptionDto">
+        <id property="optionId" column="option_id" />
+        <result property="optionName" column="option_name" />
+        <result property="optionValue" column="option_value" />
+    </resultMap>
+
+    <select id="findByPk" resultMap="PropertyShowResponseMap">
+        SELECT
+            *
+        FROM property
+        WHERE property_id = #{id}
+            AND deleted_at IS NULL
+    </select>
+
+    <select id="getOptionsByPropertyId" resultMap="PropertyOptionDtoMap">
+        SELECT
+            a.option_id,
+            b.option_name,
+            a.option_value
+        FROM property_option a
+            INNER JOIN `option` b
+                ON a.option_id = b.option_id
+        WHERE a.property_id = #{propertyId}
+    </select>
+
+    <select id="getImagesByPropertyId" resultType="string">
+        SELECT
+            image_url
+        FROM property_image
+        WHERE property_id = #{propertyId}
+          AND deleted_at IS NULL
+        ORDER BY image_id ASC
+    </select>
+</mapper>

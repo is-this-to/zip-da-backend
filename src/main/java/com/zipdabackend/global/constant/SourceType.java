@@ -1,25 +1,16 @@
 package com.zipdabackend.global.constant;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Getter;
 
-@JsonFormat(shape = JsonFormat.Shape.OBJECT)
+@Getter
 public enum SourceType {
-    DIRECT("DIRECT", "직거래"),
-    AGENT("AGENT", "공인중개사");
+    DIRECT("직거래"),
+    AGENT("공인중개사");
 
-    private final String code;
     private final String description;
 
-    SourceType(String code, String description) {
-        this.code = code;
+    SourceType(String description) {
         this.description = description;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public String getDescription() {
-        return description;
     }
 }
