@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zipdabackend.domain.user.mapper.UserMapper">
+    <resultMap id="UserResultMap" type="com.zipdabackend.domain.user.entity.User">
+        <id column="user_id" property="userId" />
+        <result column="email" property="email" />
+        <result column="password" property="password" />
+        <result column="name" property="name" />
+        <result column="nick" property="nick" />
+        <result column="phone" property="phone" />
+        <result column="role" property="role" />
+        <result column="refresh_token" property="refreshToken" />
+        <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
+        <result column="deleted_at" property="deletedAt" />
+    </resultMap>
+    <select id="findByEmail" resultMap="UserResultMap">
+        SELECT
+            *
+        FROM user
+        WHERE
+            email = #{email}
+            AND deleted_at IS NULL
+    </select>
+    <select id="findByNick" resultMap="UserResultMap">
+        SELECT
+            *
+        FROM user
+        WHERE
+            nick = #{nick}
+            AND deleted_at IS NULL
+    </select>
+    <select id="findByPk" resultMap="UserResultMap">
+        SELECT
+            *
+        FROM user
+        WHERE
+            user_id = #{userId}
+          AND deleted_at IS NULL
+    </select>
+</mapper>
