@@ -1,6 +1,6 @@
 package com.zipdabackend.global.security;
 
-import com.zipdabackend.global.error.custom.TokenException;
+import com.zipdabackend.global.error.custom.auth.TokenException;
 import com.zipdabackend.global.jwt.JwtProvider;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;

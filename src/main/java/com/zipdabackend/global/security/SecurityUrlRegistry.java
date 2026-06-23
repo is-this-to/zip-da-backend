@@ -23,7 +23,8 @@ public class SecurityUrlRegistry {
             "/api/users/me",
             "/api/properties/*",
             "/api/bookmarks/*",
-            "/api/saved-searches/*"
+            "/api/saved-searches/*",
+            "/property-images"
     };
 
     public static final String[] USER_AGENT_POST_URLS = {
@@ -32,7 +33,7 @@ public class SecurityUrlRegistry {
             "/api/bookmarks",
             "/api/saved-searches",
             "/api/reports",
-            "/api/properties" // sourceType으로 user, agent가 올린 매물 구분
+            "/api/properties", // sourceType으로 user, agent가 올린 매물 구분
     };
 
     public static final String[] USER_AGENT_PATCH_URLS = {

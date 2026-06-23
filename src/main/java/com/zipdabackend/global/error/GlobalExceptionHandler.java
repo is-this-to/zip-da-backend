@@ -1,6 +1,9 @@
 package com.zipdabackend.global.error;
 
-import com.zipdabackend.global.error.custom.*;
+import com.zipdabackend.global.error.custom.FileManagedException;
+import com.zipdabackend.global.error.custom.agent.AgentApplicationAlreadyExistsException;
+import com.zipdabackend.global.error.custom.agent.AgentApplicationFailedException;
+import com.zipdabackend.global.error.custom.auth.*;
 import com.zipdabackend.global.response.GlobalResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -127,6 +131,47 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(409).body(
                 GlobalResponse.<String>builder()
                         .code("E30")
+                        .message("중복 데이터")
+                        .data(e.getMessage())
+                        .build()
+        );
+    }
+    // ------------------------------------------
+//              김민수 에러 모음
+    // ------------------------------------------
+
+    // fileUpload와 관련한 전체 에러
+    @ExceptionHandler(FileManagedException.class)
+    public ResponseEntity<GlobalResponse<String>> fileManagedHandle(FileManagedException e){
+        log.error("파일 업로드 에러: {}\n{}", e.getMessage(), Arrays.toString(e.getStackTrace()));
+        return ResponseEntity.status(500).body(
+                GlobalResponse.<String>builder()
+                        .code("E40")
+                        .message("파일 업로드 실패")
+                        .data(e.getMessage())
+                        .build()
+        );
+    }
+
+
+    // ----------------공인중개사 인증 에러-------------
+    @ExceptionHandler(AgentApplicationAlreadyExistsException.class)
+    public ResponseEntity<GlobalResponse<String>> AgentApplicationAlreadyExistsHandle(AgentApplicationAlreadyExistsException e) {
+        return ResponseEntity.status(409).body(
+                GlobalResponse.<String>builder()
+                        .code("E41")
+                        .message("중복 데이터")
+                        .data(e.getMessage())
+                        .build()
+        );
+    }
+
+    // 공인중개사 인증 DB 올리기 실패
+    @ExceptionHandler(AgentApplicationFailedException.class)
+    public ResponseEntity<GlobalResponse<String>> AgentApplicationFailedHandle(AgentApplicationFailedException e) {
+        return ResponseEntity.status(500).body(
+                GlobalResponse.<String>builder()
+                        .code("E80")
                         .message("중복 데이터")
                         .data(e.getMessage())
                         .build()

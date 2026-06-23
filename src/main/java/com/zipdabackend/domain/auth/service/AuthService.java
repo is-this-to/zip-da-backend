@@ -8,7 +8,7 @@ import com.zipdabackend.domain.user.entity.User;
 import com.zipdabackend.domain.user.mapper.UserMapper;
 import com.zipdabackend.domain.user.response.UserResponse;
 import com.zipdabackend.global.cookie.CookieManager;
-import com.zipdabackend.global.error.custom.*;
+import com.zipdabackend.global.error.custom.auth.*;
 import com.zipdabackend.global.jwt.JwtConfig;
 import com.zipdabackend.global.jwt.JwtProvider;
 import io.jsonwebtoken.Claims;
@@ -80,8 +80,8 @@ public class AuthService {
     //user 로그아웃
     public void logout(HttpServletResponse response, Long userId) {
         User user = userMapper.findByPk(userId);
-        // 일치한 user가 없음
 
+        // 일치한 user가 없음
         if(user == null) {
             throw new TokenException("유효하지 않은 인증 토큰입니다.");
         }
