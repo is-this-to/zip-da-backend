@@ -1,5 +1,6 @@
 package com.zipdabackend.global.error;
 
+import com.zipdabackend.global.error.custom.FileManagedException;
 import com.zipdabackend.global.error.custom.agent.AgentApplicationAlreadyExistsException;
 import com.zipdabackend.global.error.custom.agent.AgentApplicationFailedException;
 import com.zipdabackend.global.error.custom.auth.*;

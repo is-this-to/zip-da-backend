@@ -7,6 +7,7 @@ import com.zipdabackend.domain.auth.request.AdminLoginRequest;
 import com.zipdabackend.domain.auth.response.AuthResponse;
 import com.zipdabackend.global.constant.UserRole;
 import com.zipdabackend.global.error.custom.auth.NotRegisteredException;
+import com.zipdabackend.global.error.custom.auth.TokenException;
 import com.zipdabackend.global.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,7 +37,7 @@ public class AuthAdminService {
 
 
     public AuthResponse<AdminResponse> loginAdmin(AdminLoginRequest adminLoginRequest) {
-        Admin findByEmailAdmin = adminMapper.findbyCode(adminLoginRequest.adminCode());
+        Admin findByEmailAdmin = adminMapper.findByCode(adminLoginRequest.adminCode());
 
         if(findByEmailAdmin == null) {
             throw new NotRegisteredException("관리자 코드 또는 비밀번호가 일치하지 않습니다.");
@@ -46,5 +47,12 @@ public class AuthAdminService {
             throw new NotRegisteredException("관리자 코드 또는 비밀번호가 일치하지 않습니다.");
         }
         return this.generateAdminAuthentication(findByEmailAdmin);
+    }
+
+    public void logout(long adminId) {
+        Admin findByIdAdmin = adminMapper.findByAdminId(adminId);
+        if (findByIdAdmin == null) {
+            throw new TokenException("유효하지 않은 인증 토큰 입니다.");
+        }
     }
 }
