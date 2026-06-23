@@ -1,6 +1,5 @@
 package com.zipdabackend.global.constant;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 
 @Getter
