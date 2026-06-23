@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -132,6 +133,23 @@ public class GlobalExceptionHandler {
                         .build()
         );
     }
+    // ------------------------------------------
+//              김민수 에러 모음
+    // ------------------------------------------
+
+    // fileUpload와 관련한 전체 에러
+    @ExceptionHandler(FileManagedException.class)
+    public ResponseEntity<GlobalResponse<String>> fileManagedHandle(FileManagedException e){
+        log.error("파일 업로드 에러: {}\n{}", e.getMessage(), Arrays.toString(e.getStackTrace()));
+        return ResponseEntity.status(500).body(
+                GlobalResponse.<String>builder()
+                        .code("E40")
+                        .message("파일 업로드 실패")
+                        .data(e.getMessage())
+                        .build()
+        );
+    }
+
 
     // ----------------------------------------------
 //              공통 에러 (dev에서 정의함)
