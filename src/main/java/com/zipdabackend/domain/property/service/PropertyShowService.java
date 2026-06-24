@@ -13,20 +13,20 @@ import java.util.List;
 public class PropertyShowService {
     private final PropertyShowMapper propertyShowMapper;
 
-public PropertyShowResponse show(Long id) {
+public PropertyShowResponse show(Long propertyId) {
 
         // 매물 기본 정보 조회
-        PropertyShowResponse result = propertyShowMapper.findByPk(id);
+        PropertyShowResponse result = propertyShowMapper.findByPk(propertyId);
 
         if (result == null) {
             throw new IllegalArgumentException("존재하지 않거나 삭제된 매물입니다.");  //TODO:사용자정의예외로 바꾸기
         }
 
         // 매물 옵션 리스트 조회
-        List<PropertyOptionDto> options = propertyShowMapper.getOptionsByPropertyId(id);
+        List<PropertyOptionDto> options = propertyShowMapper.getOptionsByPropertyId(propertyId);
 
         // 매물 이미지 URL 리스트 조회
-        List<String> imageUrls = propertyShowMapper.getImagesByPropertyId(id);
+        List<String> imageUrls = propertyShowMapper.getImagesByPropertyId(propertyId);
 
         result.setOptions(options);
         result.setImageUrls(imageUrls);
