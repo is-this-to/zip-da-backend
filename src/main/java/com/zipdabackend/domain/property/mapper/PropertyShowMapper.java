@@ -8,7 +8,7 @@ import java.util.List;
 
 @Mapper
 public interface PropertyShowMapper {
-    PropertyShowResponse findByPk(Long id); // 매물 기본 조회
+    PropertyShowResponse findByPk(Long propertyId); // 매물 기본 조회
     List<PropertyOptionDto> getOptionsByPropertyId(Long propertyId);    // 매물 옵션 조회
     List<String> getImagesByPropertyId(Long propertyId);    // 매물 이미지 조회
 }
