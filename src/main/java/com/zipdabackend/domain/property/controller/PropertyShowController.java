@@ -16,11 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class PropertyShowController {
     private final PropertyShowService propertyShowService;
 
-    @GetMapping("/properties/{id}")
+    @GetMapping("/properties/{propertyId}")
     public ResponseEntity<GlobalResponse<PropertyShowResponse> >show(
-            @PathVariable Long id
+            @PathVariable Long propertyId
     ) {
-        PropertyShowResponse result = propertyShowService.show(id);
+        PropertyShowResponse result = propertyShowService.show(propertyId);
 
         return ResponseEntity.status(200).body(
                 GlobalResponse.<PropertyShowResponse>builder()
