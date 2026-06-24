@@ -24,7 +24,7 @@ public class AgentService {
                 throw new AgentApplicationAlreadyExistsException("이미 공인중개사로 등록된 계정입니다.");
             }
             if(findByUserIdAgent.getApprovedStatus() == AgentApprovedStatus.PENDING) {
-                throw new AgentApplicationAlreadyExistsException("이미 공인중개사로 등록된 계정입니다.");
+                throw new AgentApplicationAlreadyExistsException("현재 승인 대기 중입니다..");
             }
         }
 
