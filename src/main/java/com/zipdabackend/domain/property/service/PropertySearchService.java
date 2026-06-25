@@ -16,19 +16,16 @@ public class PropertySearchService {
     private final PropertySearchMapper propertySearchMapper;
 
     public PropertySearchResponse searchProperties(PropertySearchRequest propertySearchRequest){
-        int currentPage = propertySearchRequest.page();
-        int size = propertySearchRequest.pageSize();
-        int offset = (currentPage - 1) * size;
 
+        List<PropertySummaryResponse> properties = propertySearchMapper.searchPagination(propertySearchRequest);
+        long total = propertySearchMapper.searchTotal(propertySearchRequest);
 
-        List<PropertySummaryResponse> properties = propertySearchMapper.searchPagination(size, offset);
-        long total = propertySearchMapper.searchTotal();
-        boolean lastPage = offset + size >= total;
+        boolean lastPage = propertySearchRequest.getOffset() + propertySearchRequest.pageSize() >= total;
 
         return PropertySearchResponse.builder()
                 .total(total)
-                .currentPage(currentPage)
-                .pageSize(size)
+                .currentPage(propertySearchRequest.page())
+                .pageSize(propertySearchRequest.pageSize())
                 .lastPage(lastPage)
                 .properties(properties)
                 .build();
