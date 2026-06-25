@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zipdabackend.domain.report.mapper.ReportMapper">
+    <select id="getReport" resultType="com.zipdabackend.domain.report.response.ReportManageResponse">
+        SELECT
+            rep.report_id
+             ,rep.report_type
+             ,rep.reason
+             ,rep.`status`
+             ,CONCAT_WS(' ', reg.province, reg.city, reg.district, pro.detail_address) AS address
+             ,CASE WHEN usr.`role` = 'AGENT' THEN age.office_name
+                   ELSE usr.`name`
+            END AS reporter
+             ,DATE_FORMAT(rep.created_at,'%Y.%m.%d') AS report_date
+             ,cnt.count_by_property
+             ,pro.property_type
+             ,pro.area_m2
+             ,pro.`floor`
+             ,img.image_url AS thumbnail_url
+        FROM report rep
+            LEFT OUTER JOIN property pro
+                         ON rep.property_id = pro.property_id
+            LEFT OUTER JOIN region reg
+                         ON pro.region_id = reg.region_id
+            LEFT OUTER JOIN user usr
+                         ON usr.user_id = rep.user_id
+            LEFT OUTER JOIN agent age
+                         ON usr.user_id = age.user_id
+            LEFT OUTER JOIN
+                (SELECT property_id, MAX(image_url) AS image_url
+                FROM property_image
+                WHERE deleted_at IS NULL
+                AND is_thumbnail = 1
+                GROUP BY property_id
+                ) img
+                ON pro.property_id = img.property_id
+            LEFT OUTER JOIN
+                (SELECT property_id
+                    ,COUNT(*) AS count_by_property /* 기간내 누적 신고 건수 */
+                FROM report
+                WHERE deleted_at IS NULL
+                GROUP BY property_id
+                ) cnt
+             ON rep.property_id = cnt.property_id
+        WHERE
+            rep.deleted_at IS NULL
+        ORDER BY cnt.count_by_property DESC, rep.created_at DESC
+    </select>
+
+    <update id="deleteProperty">
+        UPDATE property
+        SET
+            deleted_at = NOW()
+        WHERE
+            property_id = #{propertyId}
+    </update>
+
+    <update id="updateStatus">
+        UPDATE report
+        SET
+            status = #{status}
+        WHERE
+            report_id = #{reportId}
+    </update>
+
+    <insert id="insertReport"
+            useGeneratedKeys="true"
+            keyProperty="reportId"
+    >
+        INSERT INTO report (
+            property_id
+            ,user_id
+            ,report_type
+            ,reason
+        ) VALUES (
+            #{propertyId}
+            ,#{userId}
+            ,#{reportType}
+            ,#{reason}
+        )
+    </insert>
+
+    <select id="searchTotal">
+        SELECT
+            COUNT(*)
+        FROM report
+        WHERE
+            deleted_at IS NULL
+    </select>
+</mapper>
