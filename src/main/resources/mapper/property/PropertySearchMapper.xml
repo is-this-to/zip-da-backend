@@ -5,7 +5,7 @@
 <mapper namespace="com.zipdabackend.domain.property.mapper.PropertySearchMapper">
     <select id="searchPagination" resultType="com.zipdabackend.domain.property.response.PropertySummaryResponse">
         SELECT
-            p.property_id AS propertyID,
+            p.property_id AS propertyId,
 
             pi.image_url AS thumbnailUrl,
 

@@ -12,7 +12,7 @@ public record BookmarkCardResponse(
         Long deposit, // 보증금
         Long monthlyRent, // 월세
         Double areaM2, // 면적
-        Integer floor, //
+        Long floor, //
         Long maintenanceFee, // 관리비
         String regionName // 서울특별시 강남구 역삼동 같은 지역명
 ) {

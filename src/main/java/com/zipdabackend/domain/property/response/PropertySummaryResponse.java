@@ -4,19 +4,19 @@ import lombok.Builder;
 
 @Builder
 public record PropertySummaryResponse(
-        long propertyId,
+        Long propertyId,
         String thumbnailUrl,
 
         String propertyType,
         String transactionType,
 
-        long price,
-        long deposit,
-        long monthlyRent,
+        Long price,
+        Long deposit,
+        Long monthlyRent,
 
-        double areaM2,
+        Double areaM2,
 
-        int floor,
+        Long floor,
 
         Long maintenanceFee,
 

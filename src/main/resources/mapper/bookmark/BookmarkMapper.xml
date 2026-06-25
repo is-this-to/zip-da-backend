@@ -69,7 +69,7 @@
             p.area_m2 AS areaM2,
             p.floor AS floor,
             p.maintenance_fee AS maintenanceFee,
-            CONCAT(r.sido, ' ', r.sigungu, ' ', r.dong) AS regionName
+            CONCAT(r.province, ' ', r.city, ' ', r.district) AS regionName
         FROM bookmark b
                  JOIN property p
                       ON b.property_id = p.property_id

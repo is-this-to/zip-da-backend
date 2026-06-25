@@ -5,7 +5,6 @@ import com.zipdabackend.domain.user.request.MyProfileUpdateRequest;
 import com.zipdabackend.domain.user.response.MyPropertyCardResponse;
 import com.zipdabackend.domain.user.response.MyReportResponse;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -16,37 +15,25 @@ public interface UserProfileMapper {
     User findMyProfile(Long userId);
 
     // 이메일, 비밀번호는 제외하고 이름/닉네임/휴대폰 번호만 수정한다.
-    int updateProfile(
-            @Param("userId") Long userId,
-            @Param("request") MyProfileUpdateRequest request
-    );
+    int updateProfile(Long userId, MyProfileUpdateRequest request);
 
     // 회원 탈퇴는 실제 삭제가 아니라 deleted_at만 채우는 soft delete로 처리한다.
     int softDeleteUser(Long userId);
 
     // 비밀번호 변경용. 프론트에서는 아직 연결하지 않는다.
-    int updatePassword(
-            @Param("userId") Long userId,
-            @Param("encodedPassword") String encodedPassword
-    );
+    int updatePassword(Long userId, String encodedPassword);
 
     // 공인중개사 프로필 사진 조회. 일반 유저는 사용하지 않는다.
     String findAgentProfileImageUrl(Long userId);
 
-    // 공인중개사 프로필 사진이 이미 있으면 update, 없으면 insert하기 위해 개수를 확인한다.
+    // 공인중개사 프로필 사진이 이미 있으면 update, 없으면 insert하기 위해 개수를 확 인한다.
     int countAgentProfileImage(Long userId);
 
     // 공인중개사 프로필 사진을 최초 등록한다.
-    int insertAgentProfileImage(
-            @Param("userId") Long userId,
-            @Param("profileImageUrl") String profileImageUrl
-    );
+    int insertAgentProfileImage(Long userId, String profileImageUrl);
 
     // 공인중개사 프로필 사진을 변경한다.
-    int updateAgentProfileImage(
-            @Param("userId") Long userId,
-            @Param("profileImageUrl") String profileImageUrl
-    );
+    int updateAgentProfileImage(Long userId, String profileImageUrl);
 
     // 내가 올린 매물 목록 조회. USER/AGENT 둘 다 조회 가능하다.
     List<MyPropertyCardResponse> findMyProperties(Long userId);
