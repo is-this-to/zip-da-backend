@@ -10,13 +10,13 @@ public record PropertySummaryResponse(
         String propertyType,
         String transactionType,
 
-        long price,
-        long deposit,
-        long monthlyRent,
+        Long price,
+        Long deposit,
+        Long monthlyRent,
 
-        double areaM2,
+        Double areaM2,
 
-        int floor,
+        Integer floor,
 
         Long maintenanceFee,
 
