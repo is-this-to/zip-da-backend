@@ -4,6 +4,7 @@ import com.zipdabackend.global.error.custom.FileManagedException;
 import com.zipdabackend.global.error.custom.agent.AgentApplicationAlreadyExistsException;
 import com.zipdabackend.global.error.custom.agent.AgentApplicationFailedException;
 import com.zipdabackend.global.error.custom.auth.*;
+import com.zipdabackend.global.error.custom.report.ReportAlreadyExistsException;
 import com.zipdabackend.global.response.GlobalResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -153,7 +154,6 @@ public class GlobalExceptionHandler {
         );
     }
 
-
     // ----------------공인중개사 인증 에러-------------
     @ExceptionHandler(AgentApplicationAlreadyExistsException.class)
     public ResponseEntity<GlobalResponse<String>> AgentApplicationAlreadyExistsHandle(AgentApplicationAlreadyExistsException e) {
@@ -172,6 +172,22 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(500).body(
                 GlobalResponse.<String>builder()
                         .code("E80")
+                        .message("중복 데이터")
+                        .data(e.getMessage())
+                        .build()
+        );
+    }
+
+    // ------------------------------------------
+//              이예진 에러 모음
+    // ------------------------------------------
+
+    // 같은 회원이 같은 매물 중복 신고
+    @ExceptionHandler(ReportAlreadyExistsException.class)
+    public ResponseEntity<GlobalResponse<String>> reportAlreadyExistsHandle(ReportAlreadyExistsException e) {
+        return ResponseEntity.status(409).body(
+                GlobalResponse.<String>builder()
+                        .code("E30")
                         .message("중복 데이터")
                         .data(e.getMessage())
                         .build()

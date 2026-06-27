@@ -12,6 +12,7 @@ public record ReportManageResponse(
         ,String reporter
         ,String reportDate
         ,Long countByProperty
+        ,Long propertyId
         ,String propertyType
         ,Long areaM2
         ,Long floor

@@ -14,6 +14,7 @@
             END AS reporter
              ,DATE_FORMAT(rep.created_at,'%Y.%m.%d') AS report_date
              ,cnt.count_by_property
+             ,pro.property_id
              ,pro.property_type
              ,pro.area_m2
              ,pro.`floor`
@@ -45,7 +46,16 @@
              ON rep.property_id = cnt.property_id
         WHERE
             rep.deleted_at IS NULL
-        ORDER BY cnt.count_by_property DESC, rep.created_at DESC
+        ORDER BY cnt.count_by_property DESC, rep.created_at DESC, rep.report_id DESC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="searchTotal">
+        SELECT
+            COUNT(*)
+        FROM report
+        WHERE
+            deleted_at IS NULL
     </select>
 
     <update id="deleteProperty">
@@ -64,6 +74,14 @@
             report_id = #{reportId}
     </update>
 
+    <select id="findByUserProperty" resultType="com.zipdabackend.domain.report.entity.Report">
+        SELECT *
+        FROM report
+        WHERE
+            property_id = #{propertyId}
+            AND user_id = #{userId}
+    </select>
+
     <insert id="insertReport"
             useGeneratedKeys="true"
             keyProperty="reportId"
@@ -73,19 +91,13 @@
             ,user_id
             ,report_type
             ,reason
+            ,status
         ) VALUES (
             #{propertyId}
             ,#{userId}
             ,#{reportType}
             ,#{reason}
+            ,#{status}
         )
     </insert>
-
-    <select id="searchTotal">
-        SELECT
-            COUNT(*)
-        FROM report
-        WHERE
-            deleted_at IS NULL
-    </select>
 </mapper>
