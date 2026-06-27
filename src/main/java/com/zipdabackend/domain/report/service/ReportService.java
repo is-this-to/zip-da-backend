@@ -2,6 +2,7 @@ package com.zipdabackend.domain.report.service;
 
 import com.zipdabackend.domain.report.entity.Report;
 import com.zipdabackend.domain.report.mapper.ReportMapper;
+import com.zipdabackend.domain.report.request.ReportCreateRequest;
 import com.zipdabackend.domain.report.request.ReportManageRequest;
 import com.zipdabackend.domain.report.request.ReportProcessRequest;
 import com.zipdabackend.domain.report.response.PageResponse;
@@ -59,17 +60,23 @@ public class ReportService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public ReportCreateResponse create(Report report) {
+    public ReportCreateResponse create(ReportCreateRequest reportCreateRequest) {
         // 동일 매물 중복 신고 방지(유저당 1회)
-        Report alreadyReport = reportMapper.findByUserProperty(report.getUserId(), report.getPropertyId());
+        Report alreadyReport = reportMapper.findByUserProperty(reportCreateRequest.userId(), reportCreateRequest.propertyId());
 
         if(alreadyReport != null) {
             throw new ReportAlreadyExistsException("같은 회원이 같은 매물 중복 신고입니다.");
         }
 
         // 신고하기
-        reportMapper.insertReport(report);
+        Report newReport = new Report();
+        newReport.setPropertyId(reportCreateRequest.propertyId());
+        newReport.setUserId(reportCreateRequest.userId());
+        newReport.setReportType(reportCreateRequest.reportType());
+        newReport.setReason(reportCreateRequest.reason());
+        newReport.setStatus(reportCreateRequest.status());
+        reportMapper.insertReport(newReport);
 
-        return new ReportCreateResponse(report.getReportId(), report.getStatus());
+        return new ReportCreateResponse(newReport.getReportId(), newReport.getStatus());
     }
 }

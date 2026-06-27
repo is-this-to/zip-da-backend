@@ -4,9 +4,10 @@ import com.zipdabackend.global.constant.ReportStatus;
 import com.zipdabackend.global.constant.ReportType;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
-@Builder
+@Setter
 public class Report {
     private Long reportId;
     private Long propertyId;

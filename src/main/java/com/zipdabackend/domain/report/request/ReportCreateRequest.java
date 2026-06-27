@@ -2,7 +2,6 @@ package com.zipdabackend.domain.report.request;
 
 import com.zipdabackend.global.constant.ReportStatus;
 import com.zipdabackend.global.constant.ReportType;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record ReportCreateRequest(
