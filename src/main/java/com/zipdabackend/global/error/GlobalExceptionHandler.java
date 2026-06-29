@@ -3,6 +3,7 @@ package com.zipdabackend.global.error;
 import com.zipdabackend.global.error.custom.FileManagedException;
 import com.zipdabackend.global.error.custom.agent.AgentApplicationAlreadyExistsException;
 import com.zipdabackend.global.error.custom.agent.AgentApplicationFailedException;
+import com.zipdabackend.global.error.custom.agent.AgentNotFoundException;
 import com.zipdabackend.global.error.custom.auth.*;
 import com.zipdabackend.global.response.GlobalResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -77,8 +78,6 @@ public class GlobalExceptionHandler {
         );
     }
 
-    // --------------
-
     // --------------token 재발급 에러 모음 ------------
     @ExceptionHandler(TokenException.class)
     public ResponseEntity<GlobalResponse<String>> TokenHandle(TokenException e) {
@@ -136,6 +135,41 @@ public class GlobalExceptionHandler {
                         .build()
         );
     }
+    // ----------------공인중개사 인증 에러-------------
+    @ExceptionHandler(AgentApplicationAlreadyExistsException.class)
+    public ResponseEntity<GlobalResponse<String>> AgentApplicationAlreadyExistsHandle(AgentApplicationAlreadyExistsException e) {
+        return ResponseEntity.status(409).body(
+                GlobalResponse.<String>builder()
+                        .code("E41")
+                        .message("이미 공인중개사 회원입니다.")
+                        .data(e.getMessage())
+                        .build()
+        );
+    }
+
+    // 공인중개사 인증 DB 올리기 실패
+    @ExceptionHandler(AgentApplicationFailedException.class)
+    public ResponseEntity<GlobalResponse<String>> AgentApplicationFailedHandle(AgentApplicationFailedException e) {
+        return ResponseEntity.status(500).body(
+                GlobalResponse.<String>builder()
+                        .code("E80")
+                        .message("DB 에러")
+                        .data(e.getMessage())
+                        .build()
+        );
+    }
+
+    @ExceptionHandler(AgentNotFoundException.class)
+    public ResponseEntity<GlobalResponse<String>> AgentNotFoundHandle(AgentNotFoundException e) {
+        return ResponseEntity.status(404).body(
+                GlobalResponse.<String>builder()
+                        .code("E40")
+                        .message("조회 실패")
+                        .data(e.getMessage())
+                        .build()
+        );
+    }
+
     // ------------------------------------------
 //              김민수 에러 모음
     // ------------------------------------------
@@ -148,31 +182,6 @@ public class GlobalExceptionHandler {
                 GlobalResponse.<String>builder()
                         .code("E40")
                         .message("파일 업로드 실패")
-                        .data(e.getMessage())
-                        .build()
-        );
-    }
-
-
-    // ----------------공인중개사 인증 에러-------------
-    @ExceptionHandler(AgentApplicationAlreadyExistsException.class)
-    public ResponseEntity<GlobalResponse<String>> AgentApplicationAlreadyExistsHandle(AgentApplicationAlreadyExistsException e) {
-        return ResponseEntity.status(409).body(
-                GlobalResponse.<String>builder()
-                        .code("E41")
-                        .message("중복 데이터")
-                        .data(e.getMessage())
-                        .build()
-        );
-    }
-
-    // 공인중개사 인증 DB 올리기 실패
-    @ExceptionHandler(AgentApplicationFailedException.class)
-    public ResponseEntity<GlobalResponse<String>> AgentApplicationFailedHandle(AgentApplicationFailedException e) {
-        return ResponseEntity.status(500).body(
-                GlobalResponse.<String>builder()
-                        .code("E80")
-                        .message("중복 데이터")
                         .data(e.getMessage())
                         .build()
         );

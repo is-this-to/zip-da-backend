@@ -42,4 +42,11 @@
         WHERE user_id = #{userId}
     </update>
 
+    <update id="updateAdminRefreshToken" >
+        UPDATE admin
+        SET
+            refresh_token = #{refreshToken},
+            updated_at = now()
+        WHERE admin_id = #{adminId}
+    </update>
 </mapper>

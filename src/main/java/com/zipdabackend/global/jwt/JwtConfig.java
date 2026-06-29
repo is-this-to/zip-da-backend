@@ -15,5 +15,6 @@ public record JwtConfig(
         String secret,
         String authorizationHeaderName,
         String scheme,
-        String refreshTokenCookiePath
+        String refreshTokenCookiePath,
+        String adminRefreshTokenCookiePath
 ) {}
