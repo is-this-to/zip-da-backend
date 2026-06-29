@@ -181,6 +181,17 @@ public class GlobalExceptionHandler {
     // ----------------------------------------------
 //              공통 에러 (dev에서 정의함)
     // ----------------------------------------------
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<GlobalResponse<String>> illegalArgumentHandle(IllegalArgumentException e){
+        return ResponseEntity.status(400).body(
+                GlobalResponse.<String>builder()
+                        .code("E21")
+                        .message("요청 파라미터에 이상이 있습니다.")
+                        .data(e.getMessage())
+                        .build()
+        );
+    }
+
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<GlobalResponse<String>> methodArgumentTypeMismatchHandle(MethodArgumentTypeMismatchException e){
         return ResponseEntity.status(400).body(
