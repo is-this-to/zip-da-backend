@@ -4,6 +4,7 @@ import com.zipdabackend.domain.property.request.PropertySearchRequest;
 import com.zipdabackend.domain.property.response.PropertySearchResponse;
 import com.zipdabackend.domain.property.service.PropertySearchService;
 import com.zipdabackend.global.response.GlobalResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +18,7 @@ public class PropertySearchController {
     private final PropertySearchService propertySearchService;
 
     @GetMapping("/properties")
-    public ResponseEntity<GlobalResponse<PropertySearchResponse>> searchProperties(PropertySearchRequest propertySearchRequest){
+    public ResponseEntity<GlobalResponse<PropertySearchResponse>> searchProperties(@Valid PropertySearchRequest propertySearchRequest){
         PropertySearchResponse propertySearchResponse = propertySearchService.searchProperties(propertySearchRequest);
 
         return ResponseEntity.status(200).body(

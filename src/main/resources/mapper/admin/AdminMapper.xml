@@ -13,13 +13,21 @@
         <result column="deleted_at" property="deletedAt" />
     </resultMap>
 
-    <select id="findbyCode" resultMap="AdminResultMap">
+    <select id="findByCode" resultMap="AdminResultMap">
         SELECT
             *
         FROM admin
         WHERE
-            admin_code = #{adminCode}
-            AND deleted_at IS NULL
+            deleted_at IS NULL
+            AND admin_code = #{adminCode}
     </select>
 
+    <select id="findByAdminId" resultMap="AdminResultMap">
+        SELECT
+            *
+        FROM admin
+        WHERE
+            deleted_at IS NULL
+            AND admin_id = #{adminId}
+    </select>
 </mapper>

@@ -4,7 +4,7 @@ import com.zipdabackend.domain.admin.entity.Admin;
 import com.zipdabackend.domain.user.entity.User;
 import com.zipdabackend.global.constant.UserRole;
 import com.zipdabackend.global.cookie.CookieManager;
-import com.zipdabackend.global.error.custom.TokenException;
+import com.zipdabackend.global.error.custom.auth.TokenException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
