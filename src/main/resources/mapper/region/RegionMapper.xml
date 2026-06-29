@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zipdabackend.domain.region.mapper.RegionMapper">
+    <select id="searchRegions" resultType="com.zipdabackend.domain.region.response.RegionResponse">
+        SELECT
+            region_id AS regionId,
+            CONCAT(province, ' ', city, ' ', district) AS regionName
+        FROM region
+        <where>
+            <if test="province != null and province != ''">
+                AND province = #{province}
+            </if>
+            <if test="city != null and city != ''">
+                AND city = #{city}
+            </if>
+            <if test="district != null and district != ''">
+                AND district = #{district}
+            </if>
+        </where>
+        ORDER BY province, city, district
+    </select>
+    <select id="searchProvinces" resultType="string">
+        SELECT DISTINCT province
+        FROM region
+        ORDER BY province
+    </select>
+    <select id="searchCities" resultType="string">
+        SELECT DISTINCT city
+        FROM region
+        WHERE province = #{province}
+        ORDER BY city
+    </select>
+    <select id="searchDistricts" resultType="com.zipdabackend.domain.region.response.RegionResponse">
+        SELECT
+            region_id AS regionId,
+            district AS regionName
+        FROM region
+        WHERE province = #{province}
+            AND city = #{city}
+        ORDER BY district
+    </select>
+</mapper>

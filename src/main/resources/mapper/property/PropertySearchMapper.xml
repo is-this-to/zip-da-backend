@@ -4,8 +4,9 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zipdabackend.domain.property.mapper.PropertySearchMapper">
     <select id="searchPagination" resultType="com.zipdabackend.domain.property.response.PropertySummaryResponse">
+        <bind name="offset" value="(page - 1) * pageSize"/>
         SELECT
-            p.property_id AS propertyID,
+            p.property_id AS propertyId,
 
             pi.image_url AS thumbnailUrl,
 
@@ -29,21 +30,85 @@
             LEFT JOIN property_image pi
                 ON p.property_id = pi.property_id
                 AND pi.is_thumbnail = 1
-
-        WHERE
+                AND pi.deleted_at IS NULL
+        <where>
             p.deleted_at IS NULL
+
+            <if test="propertyType != null">
+                AND p.property_type = #{propertyType}
+            </if>
+            <if test="transactionType != null">
+                AND p.transaction_type = #{transactionType}
+            </if>
+            <if test="status != null">
+                AND p.status = #{status}
+            </if>
+            <if test="regionId != null">
+                AND p.region_id = #{regionId}
+            </if>
+            <if test="minPrice != null">
+                AND p.price &gt;= #{minPrice}
+            </if>
+            <if test="maxPrice != null">
+                AND p.price &lt;= #{maxPrice}
+            </if>
+            <if test="minDeposit != null">
+                AND p.deposit &gt;= #{minDeposit}
+            </if>
+            <if test="maxDeposit != null">
+                AND p.deposit &lt;= #{maxDeposit}
+            </if>
+            <if test="minMonthlyRent != null">
+                AND p.monthly_rent &gt;= #{minMonthlyRent}
+            </if>
+            <if test="maxMonthlyRent != null">
+                AND p.monthly_rent &lt;= #{maxMonthlyRent}
+            </if>
+        </where>
         ORDER BY
             p.property_id DESC
-        LIMIT #{size} OFFSET #{offset}
+        LIMIT #{pageSize} OFFSET #{offset}
     </select>
 
-    <select id="searchTotal">
+    <select id="searchTotal" resultType="long">
         SELECT
             COUNT(*)
-        FROM property
-        WHERE
+        FROM property p
+        <where>
             deleted_at IS NULL
+            <if test="propertyType != null">
+                AND p.property_type = #{propertyType}
+            </if>
+            <if test="transactionType != null">
+                AND p.transaction_type = #{transactionType}
+            </if>
+            <if test="status != null">
+                AND p.status = #{status}
+            </if>
+            <if test="regionId != null">
+                AND p.region_id = #{regionId}
+            </if>
+
+            <if test="minPrice != null">
+                AND p.price &gt;= #{minPrice}
+            </if>
+            <if test="maxPrice != null">
+                AND p.price &lt;= #{maxPrice}
+            </if>
+            <if test="minDeposit != null">
+                AND p.deposit &gt;= #{minDeposit}
+            </if>
+            <if test="maxDeposit != null">
+                AND p.deposit &lt;= #{maxDeposit}
+            </if>
+            <if test="minMonthlyRent != null">
+                AND p.monthly_rent &gt;= #{minMonthlyRent}
+            </if>
+            <if test="maxMonthlyRent != null">
+                AND p.monthly_rent &lt;= #{maxMonthlyRent}
+            </if>
+        </where>
     </select>
 
-    
+
 </mapper>
