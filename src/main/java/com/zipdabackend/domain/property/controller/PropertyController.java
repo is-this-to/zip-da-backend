@@ -9,10 +9,12 @@ import com.zipdabackend.domain.property.response.PropertyStatusUpdateResponse;
 import com.zipdabackend.domain.property.service.PropertyService;
 import com.zipdabackend.global.constant.UserRole;
 import com.zipdabackend.global.response.GlobalResponse;
+import io.jsonwebtoken.Claims;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -25,10 +27,6 @@ import org.springframework.web.bind.annotation.*;
  *  - DELETE /api/properties/{id}         매물 삭제   (PROPERTY02, soft delete)
  *
  * 응답은 모두 GlobalResponse 로 감쌈 (성공: code "00", message "정상 처리").
- *
- * ※ 인증 파트(한지윤 / feature/auth-user-agent_HJY) 연동 전까지
- *   currentUserId / currentUserRole 은 더미 값 반환.
- *   연동 후 @AuthenticationPrincipal 등으로 교체.
  */
 @RestController
 @RequestMapping("api/properties")
@@ -40,10 +38,11 @@ public class PropertyController {
     private final PropertyService propertyService;
 
     @PostMapping
-    public ResponseEntity<GlobalResponse<PropertyCreateResponse>>create(
-            @Valid @RequestBody PropertyCreateRequest request) {
+    public ResponseEntity<GlobalResponse<PropertyCreateResponse>> create(
+            @Valid @RequestBody PropertyCreateRequest request,
+            @AuthenticationPrincipal Claims claims) {
         PropertyCreateResponse data = propertyService.create(
-                request, currentUserId(), currentUserRole());
+                request, getUserId(claims), getUserRole(claims));
         return ResponseEntity.status(HttpStatus.CREATED).body(ok(data));
     }
 
@@ -55,24 +54,28 @@ public class PropertyController {
     @PatchMapping("/{propertyId}")
     public ResponseEntity<GlobalResponse<PropertyDetailResponse>> update(
             @PathVariable Long propertyId,
-            @Valid @RequestBody PropertyUpdateRequest request) {
+            @Valid @RequestBody PropertyUpdateRequest request,
+            @AuthenticationPrincipal Claims claims) {
         PropertyDetailResponse data = propertyService.update(
-                propertyId, request, currentUserId(),currentUserRole());
+                propertyId, request, getUserId(claims), getUserRole(claims));
         return ResponseEntity.ok(ok(data));
     }
 
     @PatchMapping("/{propertyId}/status")
     public ResponseEntity<GlobalResponse<PropertyStatusUpdateResponse>> changeStatus(
             @PathVariable Long propertyId,
-            @Valid @RequestBody PropertyStatusUpdateRequest request) {
+            @Valid @RequestBody PropertyStatusUpdateRequest request,
+            @AuthenticationPrincipal Claims claims) {
         PropertyStatusUpdateResponse data = propertyService.changeStatus(
-                propertyId, request.getStatus(), currentUserId(), currentUserRole());
-                return ResponseEntity.ok(ok(data));
+                propertyId, request.getStatus(), getUserId(claims), getUserRole(claims));
+        return ResponseEntity.ok(ok(data));
     }
 
     @DeleteMapping("/{propertyId}")
-    public ResponseEntity<GlobalResponse<Object>> delete(@PathVariable Long propertyId) {
-        propertyService.delete(propertyId, currentUserId(), currentUserRole());
+    public ResponseEntity<GlobalResponse<Object>> delete(
+            @PathVariable Long propertyId,
+            @AuthenticationPrincipal Claims claims) {
+        propertyService.delete(propertyId, getUserId(claims), getUserRole(claims));
         return ResponseEntity.ok(ok(null));
     }
 
@@ -85,58 +88,12 @@ public class PropertyController {
                 .data(data)
                 .build();
     }
-    /**
-     * 현재 로그인 사용자 ID (임시).
-     * 인증 연동 후 @AuthenticationPrincipal Long userId 로 교체.
-     */
-    private Long currentUserId() {
-        return 1L; // 더미: user 테이블에 미리 넣어둔 테스트 계정 PK
+
+    private Long getUserId(Claims claims) {
+        return Long.parseLong(claims.getSubject());
     }
 
-    /**
-     * 현재 로그인 사용자 권한 (임시).
-     * 인증 연동 후 principal 에서 role 추출하도록 교체.
-     */
-    private UserRole currentUserRole() {
-        return UserRole.AGENT; // AGENT/ADMIN/USER 테스트 시 값 변경
+    private UserRole getUserRole(Claims claims) {
+        return UserRole.valueOf(claims.get("role", String.class));
     }
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

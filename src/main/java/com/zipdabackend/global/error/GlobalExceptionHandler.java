@@ -1,8 +1,6 @@
 package com.zipdabackend.global.error;
 
-import com.zipdabackend.global.error.custom.FileManagedException;
-import com.zipdabackend.global.error.custom.agent.AgentApplicationAlreadyExistsException;
-import com.zipdabackend.global.error.custom.agent.AgentApplicationFailedException;
+import com.zipdabackend.global.error.custom.*;
 import com.zipdabackend.global.error.custom.auth.*;
 import com.zipdabackend.global.response.GlobalResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +12,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -25,11 +24,9 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
 
     // ------------------------------------------
-//              한지윤 에러 모음
+    //              한지윤 에러 모음
     // ------------------------------------------
 
-    // ---------------- security 에러 -------------------
-    // 인증 실패: 토큰 없음, 로그인 안 함
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<GlobalResponse<String>> authenticationHandle(AuthenticationException e) {
         return ResponseEntity.status(401).body(
@@ -41,7 +38,6 @@ public class GlobalExceptionHandler {
         );
     }
 
-    // 인가 실패: 로그인은 했지만 권한 없음
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<GlobalResponse<String>> accessDeniedHandle(AccessDeniedException e) {
         return ResponseEntity.status(403).body(
@@ -53,10 +49,8 @@ public class GlobalExceptionHandler {
         );
     }
 
-    // ---------------- 로그인 에러 ------------------
-    //  이메일이 없거나 비밀번호가 틀림
     @ExceptionHandler(NotRegisteredException.class)
-    public ResponseEntity<GlobalResponse<String>> NotRegisteredHandle(NotRegisteredException e) {
+    public ResponseEntity<GlobalResponse<String>> notRegisteredHandle(NotRegisteredException e) {
         return ResponseEntity.status(401).body(
                 GlobalResponse.<String>builder()
                         .code("E01")
@@ -65,9 +59,9 @@ public class GlobalExceptionHandler {
                         .build()
         );
     }
-    // 로그인 인증은 성공했지만 토큰 생성, 토큰 DB 저장, 인증 응답 생성 과정에서 실패
+
     @ExceptionHandler(AuthenticationFailedException.class)
-    public  ResponseEntity<GlobalResponse<String>> AuthenticationFailedHandle(AuthenticationFailedException e) {
+    public ResponseEntity<GlobalResponse<String>> authenticationFailedHandle(AuthenticationFailedException e) {
         return ResponseEntity.status(500).body(
                 GlobalResponse.<String>builder()
                         .code("E05")
@@ -77,11 +71,8 @@ public class GlobalExceptionHandler {
         );
     }
 
-    // --------------
-
-    // --------------token 재발급 에러 모음 ------------
     @ExceptionHandler(TokenException.class)
-    public ResponseEntity<GlobalResponse<String>> TokenHandle(TokenException e) {
+    public ResponseEntity<GlobalResponse<String>> tokenHandle(TokenException e) {
         return ResponseEntity.status(401).body(
                 GlobalResponse.<String>builder()
                         .code("E04")
@@ -91,8 +82,6 @@ public class GlobalExceptionHandler {
         );
     }
 
-    // ------------- 회원가입 에러 모음 -----------------
-    // 중복 이메일 회원
     @ExceptionHandler(DuplicateEmailException.class)
     public ResponseEntity<GlobalResponse<String>> duplicateEmailHandle(DuplicateEmailException e) {
         return ResponseEntity.status(409).body(
@@ -103,7 +92,7 @@ public class GlobalExceptionHandler {
                         .build()
         );
     }
-    // 중복 닉네임 회원
+
     @ExceptionHandler(DuplicateNickException.class)
     public ResponseEntity<GlobalResponse<String>> duplicateNickHandle(DuplicateNickException e) {
         return ResponseEntity.status(409).body(
@@ -114,7 +103,7 @@ public class GlobalExceptionHandler {
                         .build()
         );
     }
-    // DB에 회원이 저장되지 않음
+
     @ExceptionHandler(UserRegistrationFailedException.class)
     public ResponseEntity<GlobalResponse<String>> userRegistrationFailedHandle(UserRegistrationFailedException e) {
         return ResponseEntity.status(500).body(
@@ -125,7 +114,7 @@ public class GlobalExceptionHandler {
                         .build()
         );
     }
-    // User의 유니크 속성 중 중복된게 있음
+
     @ExceptionHandler(DuplicateUserException.class)
     public ResponseEntity<GlobalResponse<String>> duplicateUserHandle(DuplicateUserException e) {
         return ResponseEntity.status(409).body(
@@ -136,13 +125,13 @@ public class GlobalExceptionHandler {
                         .build()
         );
     }
+
     // ------------------------------------------
-//              김민수 에러 모음
+    //              김민수 에러 모음
     // ------------------------------------------
 
-    // fileUpload와 관련한 전체 에러
     @ExceptionHandler(FileManagedException.class)
-    public ResponseEntity<GlobalResponse<String>> fileManagedHandle(FileManagedException e){
+    public ResponseEntity<GlobalResponse<String>> fileManagedHandle(FileManagedException e) {
         log.error("파일 업로드 에러: {}\n{}", e.getMessage(), Arrays.toString(e.getStackTrace()));
         return ResponseEntity.status(500).body(
                 GlobalResponse.<String>builder()
@@ -153,47 +142,77 @@ public class GlobalExceptionHandler {
         );
     }
 
+    // ------------------------------------------
+    //              임호탁 에러 모음
+    // ------------------------------------------
 
-    // ----------------공인중개사 인증 에러-------------
-    @ExceptionHandler(AgentApplicationAlreadyExistsException.class)
-    public ResponseEntity<GlobalResponse<String>> AgentApplicationAlreadyExistsHandle(AgentApplicationAlreadyExistsException e) {
-        return ResponseEntity.status(409).body(
+    @ExceptionHandler(PropertyNotFoundException.class)
+    public ResponseEntity<GlobalResponse<String>> propertyNotFoundHandle(PropertyNotFoundException e) {
+        return ResponseEntity.status(404).body(
                 GlobalResponse.<String>builder()
-                        .code("E41")
-                        .message("중복 데이터")
+                        .code("E50")
+                        .message("매물을 찾을 수 없습니다.")
                         .data(e.getMessage())
                         .build()
         );
     }
 
-    // 공인중개사 인증 DB 올리기 실패
-    @ExceptionHandler(AgentApplicationFailedException.class)
-    public ResponseEntity<GlobalResponse<String>> AgentApplicationFailedHandle(AgentApplicationFailedException e) {
-        return ResponseEntity.status(500).body(
+    @ExceptionHandler(PropertyAccessDeniedException.class)
+    public ResponseEntity<GlobalResponse<String>> propertyAccessDeniedHandle(PropertyAccessDeniedException e) {
+        return ResponseEntity.status(403).body(
                 GlobalResponse.<String>builder()
-                        .code("E80")
-                        .message("중복 데이터")
+                        .code("E51")
+                        .message("매물에 대한 접근 권한이 없습니다.")
                         .data(e.getMessage())
                         .build()
         );
     }
 
-    // ----------------------------------------------
-//              공통 에러 (dev에서 정의함)
-    // ----------------------------------------------
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<GlobalResponse<String>> illegalArgumentHandle(IllegalArgumentException e){
+    @ExceptionHandler(InvalidPropertyPriceException.class)
+    public ResponseEntity<GlobalResponse<String>> invalidPropertyPriceHandle(InvalidPropertyPriceException e) {
         return ResponseEntity.status(400).body(
                 GlobalResponse.<String>builder()
-                        .code("E21")
-                        .message("요청 파라미터에 이상이 있습니다.")
+                        .code("E52")
+                        .message("가격 정보가 올바르지 않습니다.")
                         .data(e.getMessage())
                         .build()
         );
+    }
+
+    @ExceptionHandler(OptionNotFoundException.class)
+    public ResponseEntity<GlobalResponse<String>> optionNotFoundHandle(OptionNotFoundException e) {
+        return ResponseEntity.status(404).body(
+                GlobalResponse.<String>builder()
+                        .code("E53")
+                        .message("옵션을 찾을 수 없습니다.")
+                        .data(e.getMessage())
+                        .build()
+        );
+    }
+
+    @ExceptionHandler(RegionNotFoundException.class)
+    public ResponseEntity<GlobalResponse<String>> regionNotFoundHandle(RegionNotFoundException e) {
+        return ResponseEntity.status(404).body(
+                GlobalResponse.<String>builder()
+                        .code("E54")
+                        .message("지역 정보를 찾을 수 없습니다.")
+                        .data(e.getMessage())
+                        .build()
+        );
+    }
+
+    // ------------------------------------------
+    //              공통 에러
+    // ------------------------------------------
+
+    // 정적 파일 404 - 로그 없이 조용히 처리 (처음에 봤던 에러 로그 문제 해결)
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<Void> noResourceFoundHandle(NoResourceFoundException e) {
+        return ResponseEntity.notFound().build();
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<GlobalResponse<String>> methodArgumentTypeMismatchHandle(MethodArgumentTypeMismatchException e){
+    public ResponseEntity<GlobalResponse<String>> methodArgumentTypeMismatchHandle(MethodArgumentTypeMismatchException e) {
         return ResponseEntity.status(400).body(
                 GlobalResponse.<String>builder()
                         .code("E21")
@@ -204,16 +223,15 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public  ResponseEntity<GlobalResponse<Map<String, String>>> methodArgumentNotValidHandle(MethodArgumentNotValidException e){
+    public ResponseEntity<GlobalResponse<Map<String, String>>> methodArgumentNotValidHandle(MethodArgumentNotValidException e) {
         Map<String, String> errors = e.getBindingResult()
                 .getFieldErrors()
                 .stream()
                 .collect(Collectors.toMap(
-                        FieldError::getField, // 필드명
+                        FieldError::getField,
                         fieldError -> fieldError.getDefaultMessage() != null ? fieldError.getDefaultMessage() : "유효하지 않은 값입니다.",
-                        (existing, replacement) -> existing // 중복 필드가 있을 경우 기존 값 유지
+                        (existing, replacement) -> existing
                 ));
-
         return ResponseEntity.status(400).body(
                 GlobalResponse.<Map<String, String>>builder()
                         .code("E21")
@@ -224,8 +242,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(SQLException.class)
-    public ResponseEntity<GlobalResponse<String>> sqlHandler(SQLException e){
-        log.error("DB 에러",e);
+    public ResponseEntity<GlobalResponse<String>> sqlHandler(SQLException e) {
+        log.error("DB 에러", e);
         return ResponseEntity.status(500).body(
                 GlobalResponse.<String>builder()
                         .code("E80")
@@ -236,8 +254,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<GlobalResponse<String>> ordersHandle(Exception e){
-        log.error("시스템 에러",e);
+    public ResponseEntity<GlobalResponse<String>> ordersHandle(Exception e) {
+        log.error("시스템 에러", e);
         return ResponseEntity.status(500).body(
                 GlobalResponse.<String>builder()
                         .code("E99")
