@@ -129,7 +129,7 @@
             p.floor AS floor,
             p.maintenance_fee AS maintenanceFee,
             p.status AS status,
-            CONCAT(r.sido, ' ', r.sigungu, ' ', r.dong) AS regionName,
+            CONCAT(r.province, ' ', r.city, ' ', r.district) AS regionName,
             p.created_at AS createdAt
         FROM property p
                  LEFT JOIN region r
