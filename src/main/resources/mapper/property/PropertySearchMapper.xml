@@ -30,6 +30,7 @@
             LEFT JOIN property_image pi
                 ON p.property_id = pi.property_id
                 AND pi.is_thumbnail = 1
+                AND pi.deleted_at IS NULL
         <where>
             p.deleted_at IS NULL
 
@@ -109,5 +110,5 @@
         </where>
     </select>
 
-    
+
 </mapper>
