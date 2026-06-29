@@ -1,22 +1,24 @@
 package com.zipdabackend.domain.property.response;
 
+import com.zipdabackend.global.constant.PropertyType;
+import com.zipdabackend.global.constant.TransactionType;
 import lombok.Builder;
 
 @Builder
 public record PropertySummaryResponse(
-        long propertyId,
+        Long propertyId,
         String thumbnailUrl,
 
-        String propertyType,
-        String transactionType,
+        PropertyType propertyType,
+        TransactionType transactionType,
 
-        long price,
-        long deposit,
-        long monthlyRent,
+        Long price,
+        Long deposit,
+        Long monthlyRent,
 
-        double areaM2,
+        Double areaM2,
 
-        int floor,
+        Integer floor,
 
         Long maintenanceFee,
 
