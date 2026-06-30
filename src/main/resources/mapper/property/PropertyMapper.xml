@@ -84,6 +84,9 @@
         <result property="moveInDate" column="move_in_date"/>
         <result property="sourceType" column="source_type"/>
         <result property="status" column="status"/>
+        <result property="propertyUserNick" column="property_user_nick"/>
+        <result property="agentImageUrl" column="agent_image_url"/>
+        <result property="propertyUserRole" column="property_user_role"/>
         <association property="region"
                      javaType="com.zipdabackend.domain.property.response.PropertyDetailResponse$Region">
             <id property="regionId" column="region_id"/>
@@ -96,16 +99,47 @@
     <select id="selectDetailById" resultMap="propertyDetailMap">
         SELECT
             p.property_id
-            ,p.user_id, p.description, p.property_type, p.transaction_type,
-            p.price, p.deposit, p.monthly_rent, p.maintenance_fee,
-            p.detail_address, p.area_m2, p.room_count, p.bathroom_count, p.floor,
-            p.move_in_date, p.source_type, p.status,
-            r.region_id, r.province, r.city, r.district
+            ,p.user_id
+            ,p.description
+            ,p.property_type
+            ,p.transaction_type
+            ,p.price
+            ,p.deposit
+            ,p.monthly_rent
+            ,p.maintenance_fee
+            ,p.detail_address
+            ,p.area_m2
+            ,p.room_count
+            ,p.bathroom_count
+            ,p.floor
+            ,p.move_in_date
+            ,p.source_type
+            ,p.status
+            ,CASE WHEN u.`role` = 'AGENT' THEN a.office_name ELSE u.nick END AS property_user_nick
+            ,CASE WHEN u.`role` = 'AGENT' THEN a.agent_image_url ELSE '' END AS agent_image_url
+            ,u.role AS property_user_role
+            ,r.region_id
+            ,r.province
+            ,r.city
+            ,r.district
         FROM property p
-            LEFT JOIN region r ON p.region_id = r.region_id
+            LEFT JOIN region r
+                ON p.region_id = r.region_id
+            LEFT JOIN user u
+                ON u.user_id = p.user_id
+            LEFT JOIN agent a
+                ON u.user_id = a.user_id
         WHERE
             p.property_id = #{propertyId}
             AND p.deleted_at IS NULL
+    </select>
+
+    <select id="selectIsFavorite" resultType="Boolean">
+        SELECT CASE WHEN COUNT(bookmark_id) > 0 THEN TRUE ELSE FALSE END AS is_favorite
+        FROM bookmark
+        WHERE
+            property_id = #{propertyId}
+            AND user_id = #{userId}
     </select>
 
     <select id="selectImages"

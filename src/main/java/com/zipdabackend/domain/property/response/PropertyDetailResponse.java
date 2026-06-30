@@ -35,6 +35,10 @@ public class PropertyDetailResponse {
     private LocalDate moveInDate;
     private SourceType sourceType;
     private PropertyStatus status;
+    private String propertyUserNick;
+    private String agentImageUrl;
+    private String propertyUserRole;
+    private Boolean isFavorite;
     private List<Image> images;
     private List<Option> options;
 
