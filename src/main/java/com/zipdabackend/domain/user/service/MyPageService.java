@@ -69,7 +69,7 @@ public class MyPageService {
         return getMyProfile(userId);
     }
 
-    // 비밀번호 변경 기능. 화면에서는 아직 버튼만 있고 연결하지 않는다.
+    // 비밀번호 변경 기능
     @Transactional
     public void updatePassword(Long userId, UserPasswordUpdateRequest request) {
         User user = userMapper.findByPk(userId);
@@ -90,7 +90,7 @@ public class MyPageService {
         }
     }
 
-    // 회원탈퇴 기능. 화면에서는 아직 버튼만 있고 연결하지 않는다.
+    // 회원탈퇴 기능
     @Transactional
     public void withdraw(Long userId, UserWithdrawRequest request) {
         User user = userMapper.findByPk(userId);
@@ -100,7 +100,7 @@ public class MyPageService {
         }
 
         // request가 null이거나 password가 비어 있으면 비밀번호 확인 없이 soft delete만 처리한다.
-        // 팀 정책상 탈퇴 시 비밀번호 확인이 필요하면 프론트에서 password를 보내면 된다.
+
         if (request != null && request.password() != null && !request.password().isBlank()) {
             if (!passwordEncoder.matches(request.password(), user.getPassword())) {
                 throw new NotRegisteredException("비밀번호가 일치하지 않습니다.");

@@ -4,7 +4,7 @@ import com.zipdabackend.global.error.custom.agent.AgentApplicationAlreadyExistsE
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import com.zipdabackend.global.error.custom.*;
-import com.zipdabackend.global.error.custom.agent.AgentApplicationAlreadyExistsException;
+import com.zipdabackend.global.error.custom.report.ReportAlreadyExistsException;
 import com.zipdabackend.global.error.custom.agent.AgentApplicationFailedException;
 import com.zipdabackend.global.error.custom.agent.AgentNotFoundException;
 import com.zipdabackend.global.error.custom.auth.*;
@@ -205,18 +205,6 @@ public class GlobalExceptionHandler {
                 GlobalResponse.<String>builder()
                         .code("E50")
                         .message("매물을 찾을 수 없습니다.")
-                        .data(e.getMessage())
-                        .build()
-        );
-    }
-
-    // ----------------공인중개사 인증 에러-------------
-    @ExceptionHandler(AgentApplicationAlreadyExistsException.class)
-    public ResponseEntity<GlobalResponse<String>> AgentApplicationAlreadyExistsHandle(AgentApplicationAlreadyExistsException e) {
-        return ResponseEntity.status(409).body(
-                GlobalResponse.<String>builder()
-                        .code("E50") // 필요시 고유 에러 코드로 수정하세요
-                        .message("이미 신청 내역이 존재합니다.")
                         .data(e.getMessage())
                         .build()
         );
