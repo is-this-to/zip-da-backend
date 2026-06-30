@@ -8,6 +8,7 @@ import com.zipdabackend.domain.bookmark.response.BookmarkCardResponse;
 import com.zipdabackend.domain.bookmark.response.BookmarkResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ import java.util.List;
 public class BookmarkService {
   private final BookmarkMapper bookmarkMapper;
 
+  @Transactional
   public BookmarkResponse toggleBookmark(
     Long userId, BookmarkCreateRequest bookmarkCreateRequest) {
     Long propertyId = bookmarkCreateRequest.propertyId();
