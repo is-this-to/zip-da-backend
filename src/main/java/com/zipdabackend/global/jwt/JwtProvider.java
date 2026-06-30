@@ -73,8 +73,8 @@ public class JwtProvider {
     }
 
     // request에서 cookie에 있는 refreshToken 추출
-    public Optional<String> extractRefreshToken(HttpServletRequest request) {
-        return cookieManager.getCookie(request, jwtConfig.refreshTokenCookieName())
+    public Optional<String> extractRefreshToken(HttpServletRequest request, String refreshTokenName) {
+        return cookieManager.getCookie(request, refreshTokenName)
                 .map(Cookie::getValue);
     }
 
