@@ -25,6 +25,5 @@ public record AgentApplyRequest(
     @Size(max = 100, message = "중개사무소명은 100자 이하로 입력해 주세요.")
     String officeName,
 
-    @NotBlank
     String agentImageUrl
 ) {}

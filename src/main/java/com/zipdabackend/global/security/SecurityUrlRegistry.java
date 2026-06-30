@@ -24,7 +24,7 @@ public class SecurityUrlRegistry {
             "/api/properties/*",
             "/api/bookmarks/*",
             "/api/saved-searches/*",
-            "/property-images"
+            "/api/property-images"
     };
 
     public static final String[] USER_AGENT_POST_URLS = {

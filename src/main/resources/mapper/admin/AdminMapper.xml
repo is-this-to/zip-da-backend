@@ -8,6 +8,7 @@
         <result column="admin_code" property="adminCode" />
         <result column="password" property="password" />
         <result column="name" property="name" />
+        <result column="refresh_token" property="refreshToken" />
         <result column="created_at" property="createdAt" />
         <result column="updated_at" property="updatedAt" />
         <result column="deleted_at" property="deletedAt" />
@@ -30,4 +31,5 @@
             deleted_at IS NULL
             AND admin_id = #{adminId}
     </select>
+
 </mapper>

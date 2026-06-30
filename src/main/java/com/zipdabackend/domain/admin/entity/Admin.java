@@ -10,6 +10,7 @@ public class Admin {
     String adminCode;
     String password;
     String name;
+    String refreshToken;
     String createdAt;
     String updatedAt;
     String deletedAt;

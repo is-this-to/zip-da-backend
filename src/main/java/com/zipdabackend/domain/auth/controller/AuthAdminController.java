@@ -6,6 +6,8 @@ import com.zipdabackend.domain.auth.response.AuthResponse;
 import com.zipdabackend.domain.auth.service.AuthAdminService;
 import com.zipdabackend.global.response.GlobalResponse;
 import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +22,20 @@ public class AuthAdminController {
     private final AuthAdminService authAdminService;
 
     @PostMapping("/auth/sessions")
-    public ResponseEntity<GlobalResponse<AuthResponse<AdminResponse>>> loginAdmin(@Valid @RequestBody AdminLoginRequest adminLoginRequest) {
-        AuthResponse<AdminResponse> adminLogResponse = authAdminService.loginAdmin(adminLoginRequest);
+    public ResponseEntity<GlobalResponse<AuthResponse<AdminResponse>>> loginAdmin(@Valid @RequestBody AdminLoginRequest adminLoginRequest, HttpServletResponse response) {
+        AuthResponse<AdminResponse> adminLogResponse = authAdminService.loginAdmin(response, adminLoginRequest);
+        return ResponseEntity.status(200).body(
+                GlobalResponse.<AuthResponse<AdminResponse>>builder()
+                        .code("00")
+                        .message("정상 처리")
+                        .data(adminLogResponse)
+                        .build()
+        );
+    }
+
+    @PostMapping("auth/tokens")
+    public ResponseEntity<GlobalResponse<AuthResponse<AdminResponse>>> adminReissue(HttpServletResponse response, HttpServletRequest request) {
+        AuthResponse<AdminResponse> adminLogResponse = authAdminService.adminReissue(request, response);
         return ResponseEntity.status(200).body(
                 GlobalResponse.<AuthResponse<AdminResponse>>builder()
                         .code("00")
@@ -32,8 +46,8 @@ public class AuthAdminController {
     }
 
     @DeleteMapping("/auth/sessions")
-    public ResponseEntity<GlobalResponse<String>> logoutAdmin(@AuthenticationPrincipal Claims claims) {
-        authAdminService.logout(Long.parseLong(claims.getSubject()));
+    public ResponseEntity<GlobalResponse<String>> logoutAdmin(@AuthenticationPrincipal Claims claims, HttpServletResponse response) {
+        authAdminService.logout(response, Long.parseLong(claims.getSubject()));
         return ResponseEntity.status(200).body(
                 GlobalResponse.<String>builder()
                         .code("00")
