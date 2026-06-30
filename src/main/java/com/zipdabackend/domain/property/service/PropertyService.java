@@ -160,7 +160,13 @@ public class PropertyService {
         if (detail == null) {
             throw new PropertyNotFoundException("매물을 찾을 수 없습니다.");
         }
-        detail.setIsFavorite(propertyMapper.selectIsFavorite(propertyId, loginUserId));
+        if (loginUserId != null) {
+            // 로그인한 사용자만 찜 여부 조회
+            detail.setIsFavorite(propertyMapper.selectIsFavorite(propertyId, loginUserId));
+        } else {
+            // 게스트 쨈 없음
+            detail.setIsFavorite(false);
+        }
         detail.setImages(propertyMapper.selectImages(propertyId));
         detail.setOptions(propertyMapper.selectOptions(propertyId));
         return detail;
