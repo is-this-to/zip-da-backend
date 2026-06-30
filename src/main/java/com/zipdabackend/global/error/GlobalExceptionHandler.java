@@ -4,8 +4,10 @@ import com.zipdabackend.global.error.custom.agent.AgentApplicationAlreadyExistsE
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import com.zipdabackend.global.error.custom.*;
+import com.zipdabackend.global.error.custom.agent.AgentApplicationAlreadyExistsException;
+import com.zipdabackend.global.error.custom.agent.AgentApplicationFailedException;
+import com.zipdabackend.global.error.custom.agent.AgentNotFoundException;
 import com.zipdabackend.global.error.custom.auth.*;
-import com.zipdabackend.global.error.custom.report.ReportAlreadyExistsException;
 import com.zipdabackend.global.response.GlobalResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +32,8 @@ public class GlobalExceptionHandler {
     //              한지윤 에러 모음
     // ------------------------------------------
 
+    // ---------------- security 에러 -------------------
+    // 인증 실패: 토큰 없음, 로그인 안 함
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<GlobalResponse<String>> authenticationHandle(AuthenticationException e) {
         return ResponseEntity.status(401).body(
@@ -41,6 +45,7 @@ public class GlobalExceptionHandler {
         );
     }
 
+    // 인가 실패: 로그인은 했지만 권한 없음
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<GlobalResponse<String>> accessDeniedHandle(AccessDeniedException e) {
         return ResponseEntity.status(403).body(
@@ -52,6 +57,8 @@ public class GlobalExceptionHandler {
         );
     }
 
+    // ---------------- 로그인 에러 ------------------
+    //  이메일이 없거나 비밀번호가 틀림
     @ExceptionHandler(NotRegisteredException.class)
     public ResponseEntity<GlobalResponse<String>> notRegisteredHandle(NotRegisteredException e) {
         return ResponseEntity.status(401).body(
@@ -63,6 +70,7 @@ public class GlobalExceptionHandler {
         );
     }
 
+    // 로그인 인증은 성공했지만 토큰 생성, 토큰 DB 저장, 인증 응답 생성 과정에서 실패
     @ExceptionHandler(AuthenticationFailedException.class)
     public ResponseEntity<GlobalResponse<String>> authenticationFailedHandle(AuthenticationFailedException e) {
         return ResponseEntity.status(500).body(
@@ -74,6 +82,7 @@ public class GlobalExceptionHandler {
         );
     }
 
+    // --------------token 재발급 에러 모음 ------------
     @ExceptionHandler(TokenException.class)
     public ResponseEntity<GlobalResponse<String>> tokenHandle(TokenException e) {
         return ResponseEntity.status(401).body(
@@ -85,6 +94,8 @@ public class GlobalExceptionHandler {
         );
     }
 
+    // ------------- 회원가입 에러 모음 -----------------
+    // 중복 이메일 회원
     @ExceptionHandler(DuplicateEmailException.class)
     public ResponseEntity<GlobalResponse<String>> duplicateEmailHandle(DuplicateEmailException e) {
         return ResponseEntity.status(409).body(
@@ -96,6 +107,7 @@ public class GlobalExceptionHandler {
         );
     }
 
+    // 중복 닉네임 회원
     @ExceptionHandler(DuplicateNickException.class)
     public ResponseEntity<GlobalResponse<String>> duplicateNickHandle(DuplicateNickException e) {
         return ResponseEntity.status(409).body(
@@ -107,6 +119,7 @@ public class GlobalExceptionHandler {
         );
     }
 
+    // DB에 회원이 저장되지 않음
     @ExceptionHandler(UserRegistrationFailedException.class)
     public ResponseEntity<GlobalResponse<String>> userRegistrationFailedHandle(UserRegistrationFailedException e) {
         return ResponseEntity.status(500).body(
@@ -118,6 +131,7 @@ public class GlobalExceptionHandler {
         );
     }
 
+    // User의 유니크 속성 중 중복된게 있음
     @ExceptionHandler(DuplicateUserException.class)
     public ResponseEntity<GlobalResponse<String>> duplicateUserHandle(DuplicateUserException e) {
         return ResponseEntity.status(409).body(
@@ -128,6 +142,42 @@ public class GlobalExceptionHandler {
                         .build()
         );
     }
+
+    // ----------------공인중개사 인증 에러-------------
+    @ExceptionHandler(AgentApplicationAlreadyExistsException.class)
+    public ResponseEntity<GlobalResponse<String>> AgentApplicationAlreadyExistsHandle(AgentApplicationAlreadyExistsException e) {
+        return ResponseEntity.status(409).body(
+                GlobalResponse.<String>builder()
+                        .code("E41")
+                        .message("이미 공인중개사 회원입니다.")
+                        .data(e.getMessage())
+                        .build()
+        );
+    }
+
+    // 공인중개사 인증 DB 올리기 실패
+    @ExceptionHandler(AgentApplicationFailedException.class)
+    public ResponseEntity<GlobalResponse<String>> AgentApplicationFailedHandle(AgentApplicationFailedException e) {
+        return ResponseEntity.status(500).body(
+                GlobalResponse.<String>builder()
+                        .code("E80")
+                        .message("DB 에러")
+                        .data(e.getMessage())
+                        .build()
+        );
+    }
+
+    @ExceptionHandler(AgentNotFoundException.class)
+    public ResponseEntity<GlobalResponse<String>> AgentNotFoundHandle(AgentNotFoundException e) {
+        return ResponseEntity.status(404).body(
+                GlobalResponse.<String>builder()
+                        .code("E40")
+                        .message("조회 실패")
+                        .data(e.getMessage())
+                        .build()
+        );
+    }
+
 
     // ------------------------------------------
     //              김민수 에러 모음
@@ -240,17 +290,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<Void> noResourceFoundHandle(NoResourceFoundException e) {
         return ResponseEntity.notFound().build();
-    }
-
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<GlobalResponse<String>> illegalArgumentHandle(IllegalArgumentException e){
-        return ResponseEntity.status(400).body(
-                GlobalResponse.<String>builder()
-                        .code("E21")
-                        .message("요청 파라미터에 이상이 있습니다.")
-                        .data(e.getMessage())
-                        .build()
-        );
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)

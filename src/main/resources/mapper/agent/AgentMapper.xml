@@ -44,4 +44,15 @@
             AND user_id = #{userId}
             AND approved_status IN ('PENDING', 'APPROVED')
     </select>
+
+    <select id="findAgentByUserId" resultMap="AgentResultMap">
+        SELECT
+            *
+        FROM agent
+        WHERE
+            deleted_at IS NULL
+            AND user_id = #{userId}
+        ORDER BY agent_id DESC
+        LIMIT 1
+    </select>
 </mapper>

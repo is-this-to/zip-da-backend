@@ -7,4 +7,5 @@ import org.apache.ibatis.annotations.Mapper;
 public interface AgentMapper {
     int insertAgent(Agent agent);
     Agent findActiveApplyByUserId(long userId);
+    Agent findAgentByUserId(long userId);
 }

@@ -4,9 +4,11 @@ import com.zipdabackend.domain.agent.entity.Agent;
 import com.zipdabackend.domain.agent.mapper.AgentMapper;
 import com.zipdabackend.domain.agent.request.AgentApplyRequest;
 import com.zipdabackend.domain.agent.response.AgentApplyResponse;
+import com.zipdabackend.domain.agent.response.AgentCheckInfo;
 import com.zipdabackend.global.constant.AgentApprovedStatus;
 import com.zipdabackend.global.error.custom.agent.AgentApplicationAlreadyExistsException;
 import com.zipdabackend.global.error.custom.agent.AgentApplicationFailedException;
+import com.zipdabackend.global.error.custom.agent.AgentNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +26,7 @@ public class AgentService {
                 throw new AgentApplicationAlreadyExistsException("이미 공인중개사로 등록된 계정입니다.");
             }
             if(findByUserIdAgent.getApprovedStatus() == AgentApprovedStatus.PENDING) {
-                throw new AgentApplicationAlreadyExistsException("이미 공인중개사로 등록된 계정입니다.");
+                throw new AgentApplicationAlreadyExistsException("현재 승인 대기 중입니다..");
             }
         }
 
@@ -46,6 +48,20 @@ public class AgentService {
                     .agentId(newAgent.getAgentId())
                     .approvedStatus(AgentApprovedStatus.PENDING)
                     .userId(newAgent.getUserId())
+                    .build();
+    }
+
+    public AgentCheckInfo checkAgentInfo(long userId) {
+        Agent agent = agentMapper.findAgentByUserId(userId);
+        if(agent == null) {
+            throw new AgentNotFoundException("아직 공인중개사 신청을 하지 않았습니다.");
+        }
+        return AgentCheckInfo.builder()
+                    .licenseNo(agent.getLicenseNo())
+                    .officeName(agent.getOfficeName())
+                    .businessNo(agent.getBusinessNo())
+                    .approvedStatus(agent.getApprovedStatus())
+                    .agentImageUrl(agent.getAgentImageUrl())
                     .build();
     }
 }
