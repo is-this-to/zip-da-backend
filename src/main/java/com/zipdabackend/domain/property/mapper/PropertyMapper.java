@@ -26,6 +26,7 @@ public interface PropertyMapper {
 
     // ===== 상세 조회 (상세 + 수정 응답 공용) =====
     PropertyDetailResponse selectDetailById(@Param("propertyId")Long propertyId);
+    Boolean selectIsFavorite(@Param("propertyId")Long propertyId, @Param("userId")Long userId);
     List<PropertyDetailResponse.Image> selectImages(@Param("propertyId")Long propertyId);
     List<PropertyDetailResponse.Option> selectOptions(@Param("propertyId")Long propertyId);
 
