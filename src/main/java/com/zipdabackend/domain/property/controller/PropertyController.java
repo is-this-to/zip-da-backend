@@ -46,10 +46,13 @@ public class PropertyController {
         return ResponseEntity.status(HttpStatus.CREATED).body(ok(data));
     }
 
-//    @GetMapping("/{propertyId}")
-//    public ResponseEntity<GlobalResponse<PropertyDetailResponse>> detail(@PathVariable Long propertyId) {
-//        return ResponseEntity.ok(ok(propertyService.getDetail(propertyId)));
-//    }
+    @GetMapping("/{propertyId}")
+    public ResponseEntity<GlobalResponse<PropertyDetailResponse>>detail(
+            @PathVariable Long propertyId,
+            @AuthenticationPrincipal Claims claims
+    ) {
+        return ResponseEntity.ok(ok(propertyService.getDetail(propertyId, getUserId(claims))));
+    }
 
     @PatchMapping("/{propertyId}")
     public ResponseEntity<GlobalResponse<PropertyDetailResponse>> update(

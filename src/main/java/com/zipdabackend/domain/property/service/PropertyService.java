@@ -125,7 +125,7 @@ public class PropertyService {
             saveImages(propertyId, req.getImageUrls());
         }
 
-        return getDetail(propertyId);
+        return getDetail(propertyId, loginUserId);
     }
 
     // ============ 거래상태 변경 (PROPERTY03 EXECUTE02) ============
@@ -155,11 +155,12 @@ public class PropertyService {
 
     // ============ 상세 조회 (PROPERTY04 / 수정 응답 공용) ============
     @Transactional(readOnly = true)
-    public PropertyDetailResponse getDetail(Long propertyId) {
+    public PropertyDetailResponse getDetail(Long propertyId, Long loginUserId) {
         PropertyDetailResponse detail = propertyMapper.selectDetailById(propertyId);
         if (detail == null) {
             throw new PropertyNotFoundException("매물을 찾을 수 없습니다.");
         }
+        detail.setIsFavorite(propertyMapper.selectIsFavorite(propertyId, loginUserId));
         detail.setImages(propertyMapper.selectImages(propertyId));
         detail.setOptions(propertyMapper.selectOptions(propertyId));
         return detail;

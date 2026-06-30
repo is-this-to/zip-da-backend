@@ -2,6 +2,7 @@ package com.zipdabackend.global.error;
 
 import com.zipdabackend.global.error.custom.*;
 import com.zipdabackend.global.error.custom.auth.*;
+import com.zipdabackend.global.error.custom.report.ReportAlreadyExistsException;
 import com.zipdabackend.global.response.GlobalResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -202,6 +203,22 @@ public class GlobalExceptionHandler {
     }
 
     // ------------------------------------------
+//              이예진 에러 모음
+    // ------------------------------------------
+
+    // 같은 회원이 같은 매물 중복 신고
+    @ExceptionHandler(ReportAlreadyExistsException.class)
+    public ResponseEntity<GlobalResponse<String>> reportAlreadyExistsHandle(ReportAlreadyExistsException e) {
+        return ResponseEntity.status(409).body(
+                GlobalResponse.<String>builder()
+                        .code("E30")
+                        .message("중복 데이터")
+                        .data(e.getMessage())
+                        .build()
+        );
+    }
+
+    // ------------------------------------------
     //              공통 에러
     // ------------------------------------------
 
@@ -209,6 +226,17 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<Void> noResourceFoundHandle(NoResourceFoundException e) {
         return ResponseEntity.notFound().build();
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<GlobalResponse<String>> illegalArgumentHandle(IllegalArgumentException e){
+        return ResponseEntity.status(400).body(
+                GlobalResponse.<String>builder()
+                        .code("E21")
+                        .message("요청 파라미터에 이상이 있습니다.")
+                        .data(e.getMessage())
+                        .build()
+        );
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
