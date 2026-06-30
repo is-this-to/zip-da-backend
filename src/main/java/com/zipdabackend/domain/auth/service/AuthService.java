@@ -7,6 +7,7 @@ import com.zipdabackend.domain.auth.response.AuthResponse;
 import com.zipdabackend.domain.user.entity.User;
 import com.zipdabackend.domain.user.mapper.UserMapper;
 import com.zipdabackend.domain.user.response.UserResponse;
+import com.zipdabackend.global.constant.UserRole;
 import com.zipdabackend.global.cookie.CookieManager;
 import com.zipdabackend.global.error.custom.auth.*;
 import com.zipdabackend.global.jwt.JwtConfig;
@@ -45,7 +46,7 @@ public class AuthService {
         }
 
         // 새로 만든 refreshToken response 헤더에 저장, refreshToken은 reissue할때만 보냄
-        cookieManager.setCookie(response, jwtConfig.refreshTokenCookieName(), newRefreshToken, jwtConfig.refreshTokenCookieExpiry(), jwtConfig.refreshTokenCookiePath());
+        cookieManager.setCookie(response, jwtConfig.userRefreshTokenCookieName(), newRefreshToken, jwtConfig.refreshTokenCookieExpiry(), jwtConfig.refreshTokenCookiePath());
 
         return AuthResponse.<UserResponse>builder()
                 .accessToken(newAccessToken)
@@ -90,7 +91,7 @@ public class AuthService {
         authMapper.updateRefreshToken(userId, null);
 
         // Cookie에 저장한 리프레시 토큰 파기 -> maxAge 0으로 설정해서 브라우저가 쿠키 받고 없애게함
-        cookieManager.setCookie(response, jwtConfig.refreshTokenCookieName(), null, 0, jwtConfig.refreshTokenCookiePath());
+        cookieManager.setCookie(response, jwtConfig.userRefreshTokenCookieName(), null, 0, jwtConfig.refreshTokenCookiePath());
     }
 
     // 회원가입
@@ -125,7 +126,7 @@ public class AuthService {
 
     // 토큰 재발급
     public AuthResponse<UserResponse> reissueToken (HttpServletRequest request, HttpServletResponse response) {
-        Optional<String> extractRefreshTokenFromRequest = jwtProvider.extractRefreshToken(request);
+        Optional<String> extractRefreshTokenFromRequest = jwtProvider.extractRefreshToken(request, jwtConfig.userRefreshTokenCookieName());
         if(extractRefreshTokenFromRequest.isEmpty()) {
             throw new TokenException("refreshToken이 없습니다.");
         }
@@ -134,6 +135,9 @@ public class AuthService {
 
         if(!"REFRESH".equals(claims.get("tokenType", String.class))) {
             throw new TokenException("Refresh Token이 아닙니다.");
+        }
+        if(UserRole.ADMIN.name().equals(claims.get("role", String.class))) {
+            throw new TokenException("사용자 Refresh Token이 아닙니다.");
         }
 
         long userId;

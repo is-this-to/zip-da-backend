@@ -43,7 +43,7 @@ public class AuthAdminService {
             throw new AuthenticationFailedException("인증 처리 중 오류가 발생했습니다.");
         }
 
-        cookieManager.setCookie(response, jwtConfig.refreshTokenCookieName(), newRefreshToken, jwtConfig.refreshTokenCookieExpiry(), jwtConfig.adminRefreshTokenCookiePath());
+        cookieManager.setCookie(response, jwtConfig.adminRefreshTokenCookieName(), newRefreshToken, jwtConfig.refreshTokenCookieExpiry(), jwtConfig.adminRefreshTokenCookiePath());
 
         return AuthResponse.<AdminResponse>builder()
                 .accessToken(newAccessToken)
@@ -81,12 +81,12 @@ public class AuthAdminService {
         authMapper.updateAdminRefreshToken(adminId, null);
 
         // Cookie에 저장된 리프래시 토큰 파기
-        cookieManager.setCookie(response, jwtConfig.refreshTokenCookieName(), null, 0, jwtConfig.adminRefreshTokenCookiePath());
+        cookieManager.setCookie(response, jwtConfig.adminRefreshTokenCookieName(), null, 0, jwtConfig.adminRefreshTokenCookiePath());
     }
 
     // admin 재발급
     public AuthResponse<AdminResponse> adminReissue (HttpServletRequest request, HttpServletResponse response) {
-        Optional<String> extractAdminRefreshTokenFromRequest = jwtProvider.extractRefreshToken(request);
+        Optional<String> extractAdminRefreshTokenFromRequest = jwtProvider.extractRefreshToken(request, jwtConfig.adminRefreshTokenCookieName());
         if(extractAdminRefreshTokenFromRequest.isEmpty()) {
             throw new TokenException("refreshToken이 없습니다.");
         }
@@ -95,6 +95,9 @@ public class AuthAdminService {
 
         if(!"REFRESH".equals(claims.get("tokenType", String.class))) {
             throw new TokenException("Refresh Token이 아닙니다.");
+        }
+        if(!UserRole.ADMIN.name().equals(claims.get("role", String.class))) {
+            throw new TokenException("관리자 Refresh Token이 아닙니다.");
         }
 
         long adminId;
