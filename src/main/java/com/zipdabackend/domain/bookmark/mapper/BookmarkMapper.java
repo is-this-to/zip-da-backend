@@ -2,9 +2,10 @@ package com.zipdabackend.domain.bookmark.mapper;
 
 import com.zipdabackend.domain.bookmark.entity.Bookmark;
 import com.zipdabackend.domain.bookmark.response.BookmarkCardResponse;
+import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
-
+@Mapper
 public interface BookmarkMapper {
   Bookmark findByUserIdAndPropertyId(Bookmark bookmark);
   // userId와 propertyId로 이미 찜한 데이터가 있는지 조회(있으면 북마크반환, 없으면 널)
