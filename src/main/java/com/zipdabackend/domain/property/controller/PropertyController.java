@@ -51,7 +51,10 @@ public class PropertyController {
             @PathVariable Long propertyId,
             @AuthenticationPrincipal Claims claims
     ) {
-        return ResponseEntity.ok(ok(propertyService.getDetail(propertyId, getUserId(claims))));
+        // 게스트도 매물상세 봄
+        Long loginUserId = (claims != null) ? getUserId(claims) : null;
+
+        return ResponseEntity.ok(ok(propertyService.getDetail(propertyId, loginUserId)));
     }
 
     @PatchMapping("/{propertyId}")
