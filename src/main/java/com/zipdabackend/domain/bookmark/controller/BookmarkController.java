@@ -3,6 +3,7 @@ package com.zipdabackend.domain.bookmark.controller;
 import com.zipdabackend.domain.bookmark.request.BookmarkCreateRequest;
 import com.zipdabackend.domain.bookmark.response.BookmarkCardResponse;
 import com.zipdabackend.domain.bookmark.response.BookmarkResponse;
+import com.zipdabackend.domain.bookmark.response.BookmarkTop3;
 import com.zipdabackend.domain.bookmark.service.BookmarkService;
 import com.zipdabackend.global.response.GlobalResponse;
 import io.jsonwebtoken.Claims;
@@ -18,6 +19,18 @@ import java.util.List;
 @RequestMapping("/api")
 public class BookmarkController {
   private final BookmarkService bookmarkService;
+
+  @GetMapping("/bookmarks-top-3")
+  public ResponseEntity<GlobalResponse<List<BookmarkTop3>>> top3Properties() {
+    List<BookmarkTop3> result = bookmarkService.top3Properties();
+    return ResponseEntity.status(200).body(
+            GlobalResponse.<List<BookmarkTop3>>builder()
+                    .code("00")
+                    .message("정상처리")
+                    .data(result)
+                    .build()
+    );
+  }
 
   @PostMapping("/bookmarks")
   public ResponseEntity<GlobalResponse<BookmarkResponse>> toggleBookmark(

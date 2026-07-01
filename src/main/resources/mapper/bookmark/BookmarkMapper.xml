@@ -84,4 +84,39 @@
         ORDER BY b.created_at DESC
     </select>
 
+    <select id="top3Properties" resultType="com.zipdabackend.domain.bookmark.response.BookmarkTop3" >
+        SELECT
+            p.property_id AS propertyId,
+            pi.image_url AS thumbnailUrl,
+            p.price AS price,
+            p.deposit AS deposit,
+            p.monthly_rent AS monthlyRent,
+            top3.bookmarkCount AS bookmarkCount
+        FROM
+            (
+            SELECT
+                b.property_id AS propertyId,
+                COUNT(b.bookmark_id) AS bookmarkCount
+            FROM bookmark b
+            GROUP BY b.property_id
+            ) top3
+             JOIN property p
+                  ON top3.propertyId = p.property_id
+                      AND p.deleted_at IS NULL
+             LEFT JOIN (
+                 SELECT
+                     property_id,
+                     MIN(image_id) AS imageId
+                 FROM property_image
+                 WHERE
+                    is_thumbnail = 1
+                    AND deleted_at IS NULL
+                 GROUP BY property_id
+                ) thumbnail
+                ON p.property_id = thumbnail.property_id
+             LEFT JOIN property_image pi
+                   ON thumbnail.imageId = pi.image_id
+        ORDER BY top3.bookmarkCount DESC, p.property_id DESC
+        LIMIT 3
+    </select>
 </mapper>

@@ -6,6 +6,7 @@ import com.zipdabackend.domain.bookmark.request.BookmarkCreateRequest;
 import com.zipdabackend.domain.bookmark.response.BookmarkCardResponse;
 
 import com.zipdabackend.domain.bookmark.response.BookmarkResponse;
+import com.zipdabackend.domain.bookmark.response.BookmarkTop3;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +17,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BookmarkService {
   private final BookmarkMapper bookmarkMapper;
+
+  public List<BookmarkTop3> top3Properties() {
+    return bookmarkMapper.top3Properties();
+  }
 
   @Transactional
   public BookmarkResponse toggleBookmark(

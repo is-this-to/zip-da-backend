@@ -2,6 +2,7 @@ package com.zipdabackend.domain.bookmark.mapper;
 
 import com.zipdabackend.domain.bookmark.entity.Bookmark;
 import com.zipdabackend.domain.bookmark.response.BookmarkCardResponse;
+import com.zipdabackend.domain.bookmark.response.BookmarkTop3;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -19,4 +20,6 @@ public interface BookmarkMapper {
 
   List<BookmarkCardResponse> findCardsByUserId(Long userId);
   // 마이페이지 찜 카드 목록 조회
+
+  List<BookmarkTop3> top3Properties();
 }
