@@ -8,3 +8,7 @@ public interface AdminMapper {
     Admin findByCode(String adminCode);
     Admin findByAdminId(long adminId);
 }
+
+
+
+

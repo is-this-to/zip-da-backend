@@ -1,7 +1,10 @@
 package com.zipdabackend.global.error;
 
-import com.zipdabackend.global.error.custom.*;
 import com.zipdabackend.global.error.custom.agent.AgentApplicationAlreadyExistsException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
+
+import com.zipdabackend.global.error.custom.*;
+import com.zipdabackend.global.error.custom.report.ReportAlreadyExistsException;
 import com.zipdabackend.global.error.custom.agent.AgentApplicationFailedException;
 import com.zipdabackend.global.error.custom.agent.AgentNotFoundException;
 import com.zipdabackend.global.error.custom.auth.*;
@@ -15,7 +18,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -214,6 +216,22 @@ public class GlobalExceptionHandler {
                 GlobalResponse.<String>builder()
                         .code("E51")
                         .message("매물에 대한 접근 권한이 없습니다.")
+                        .data(e.getMessage())
+                        .build()
+        );
+    }
+
+    // ------------------------------------------
+//              이예진 에러 모음
+    // ------------------------------------------
+
+    // 같은 회원이 같은 매물 중복 신고
+    @ExceptionHandler(ReportAlreadyExistsException.class)
+    public ResponseEntity<GlobalResponse<String>> reportAlreadyExistsHandle(ReportAlreadyExistsException e) {
+        return ResponseEntity.status(409).body(
+                GlobalResponse.<String>builder()
+                        .code("E30")
+                        .message("중복 데이터")
                         .data(e.getMessage())
                         .build()
         );

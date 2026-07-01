@@ -38,6 +38,7 @@ public class SecurityUrlRegistry {
 
     public static final String[] USER_AGENT_PATCH_URLS = {
             "/api/users/me",
+            "/api/users/me/password", // 비밀번호 변경 유저추가
             "/api/properties/*",
             "/api/properties/*/status",
             "/api/saved-searches/*",
