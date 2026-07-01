@@ -136,7 +136,8 @@ public class AuthService {
         if(!"REFRESH".equals(claims.get("tokenType", String.class))) {
             throw new TokenException("Refresh Token이 아닙니다.");
         }
-        if(UserRole.ADMIN.name().equals(claims.get("role", String.class))) {
+        String role = claims.get("role", String.class);
+        if(!UserRole.USER.name().equals(role) && !UserRole.AGENT.name().equals(role)) {
             throw new TokenException("사용자 Refresh Token이 아닙니다.");
         }
 
