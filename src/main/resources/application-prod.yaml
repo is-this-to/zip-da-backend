@@ -1,0 +1,74 @@
+spring:
+  application:
+    name: zip-da-backend
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 20MB
+
+  datasource:
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+server:
+  error:
+    include-stacktrace: never
+    include-message: never
+
+mybatis:
+  mapper-locations: classpath:mapper/**/*Mapper.xml
+  type-aliases-package: com.zipdabackend
+
+logging:
+  file:
+    name: logs/error.log
+  level:
+    root: error
+
+    com.zipdabackend.domain: error
+
+# Security & JWT 추가 설정 필요
+# Security & JWT
+security:
+  jwt:
+    # 배포시에는 true로 변경해야함
+    secure: false
+    issuer: zipda
+    type: JWT
+    # User access token 기한 15분
+    access-token-expiry: 900000
+    # admin access token 기한 10분
+    admin-access-token-expiry: 600000
+    # refresh token 기한 7일
+    refresh-token-expiry: 604800000
+    user-refresh-token-cookie-name: user-refresh-token
+    admin-refresh-token-cookie-name: admin-refresh-token
+    refresh-token-cookie-expiry: 604800
+    secret: ${JWT_SECRET}
+    authorization-header-name: Authorization
+    scheme: Bearer
+    refresh-token-cookie-path: /api/auth/tokens
+    admin-refresh-token-cookie-path: /api/admin/auth/tokens
+
+file:
+  server-uri: ${SERVER_URI}
+  storage-path: /storage
+  profile-path: /files/profiles
+  property-path: /files/properties
+  allow-extension-list: [
+    "image/jpg",
+    "image/jpeg",
+    "image/png",
+    "image/gif",
+    "image/svg",
+    "image/webp"
+  ]
+
+# config 추가 설정 필요
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS}
+  max-age: 3600
+# config 추가 설정 필요
