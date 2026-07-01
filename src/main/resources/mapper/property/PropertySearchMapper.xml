@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zipdabackend.domain.property.mapper.PropertySearchMapper">
+    <select id="searchPagination" resultType="com.zipdabackend.domain.property.response.PropertySummaryResponse">
+        <bind name="offset" value="(page - 1) * pageSize"/>
+        SELECT
+            p.property_id AS propertyId,
+
+            pi.image_url AS thumbnailUrl,
+
+            p.property_type AS propertyType,
+            p.transaction_type AS transactionType,
+
+            p.price AS price,
+            p.deposit AS deposit,
+            p.monthly_rent AS monthlyRent,
+
+            p.area_m2 AS areaM2,
+            p.floor AS floor,
+            p.maintenance_fee AS maintenanceFee,
+
+            CONCAT(r.province, ' ', r.city, ' ', r.district) AS regionName
+
+        FROM property p
+            LEFT JOIN region r
+                ON p.region_id = r.region_id
+
+            LEFT JOIN property_image pi
+                ON p.property_id = pi.property_id
+                AND pi.is_thumbnail = 1
+                AND pi.deleted_at IS NULL
+        <where>
+            p.deleted_at IS NULL
+
+            <if test="propertyType != null">
+                AND p.property_type = #{propertyType}
+            </if>
+            <if test="transactionType != null">
+                AND p.transaction_type = #{transactionType}
+            </if>
+            <if test="status != null">
+                AND p.status = #{status}
+            </if>
+            <if test="regionId != null">
+                AND p.region_id = #{regionId}
+            </if>
+            <if test="minPrice != null">
+                AND p.price &gt;= #{minPrice}
+            </if>
+            <if test="maxPrice != null">
+                AND p.price &lt;= #{maxPrice}
+            </if>
+            <if test="minDeposit != null">
+                AND p.deposit &gt;= #{minDeposit}
+            </if>
+            <if test="maxDeposit != null">
+                AND p.deposit &lt;= #{maxDeposit}
+            </if>
+            <if test="minMonthlyRent != null">
+                AND p.monthly_rent &gt;= #{minMonthlyRent}
+            </if>
+            <if test="maxMonthlyRent != null">
+                AND p.monthly_rent &lt;= #{maxMonthlyRent}
+            </if>
+        </where>
+        ORDER BY
+            p.property_id DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <select id="searchTotal" resultType="long">
+        SELECT
+            COUNT(*)
+        FROM property p
+        <where>
+            deleted_at IS NULL
+            <if test="propertyType != null">
+                AND p.property_type = #{propertyType}
+            </if>
+            <if test="transactionType != null">
+                AND p.transaction_type = #{transactionType}
+            </if>
+            <if test="status != null">
+                AND p.status = #{status}
+            </if>
+            <if test="regionId != null">
+                AND p.region_id = #{regionId}
+            </if>
+
+            <if test="minPrice != null">
+                AND p.price &gt;= #{minPrice}
+            </if>
+            <if test="maxPrice != null">
+                AND p.price &lt;= #{maxPrice}
+            </if>
+            <if test="minDeposit != null">
+                AND p.deposit &gt;= #{minDeposit}
+            </if>
+            <if test="maxDeposit != null">
+                AND p.deposit &lt;= #{maxDeposit}
+            </if>
+            <if test="minMonthlyRent != null">
+                AND p.monthly_rent &gt;= #{minMonthlyRent}
+            </if>
+            <if test="maxMonthlyRent != null">
+                AND p.monthly_rent &lt;= #{maxMonthlyRent}
+            </if>
+        </where>
+    </select>
+
+
+</mapper>

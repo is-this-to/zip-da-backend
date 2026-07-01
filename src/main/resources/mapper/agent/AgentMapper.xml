@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zipdabackend.domain.agent.mapper.AgentMapper">
+    <resultMap id="AgentResultMap" type="com.zipdabackend.domain.agent.entity.Agent">
+        <id column="agent_id" property="agentId" />
+        <result column="user_id" property="userId" />
+        <result column="license_no" property="licenseNo" />
+        <result column="business_no" property="businessNo" />
+        <result column="approved_status" property="approvedStatus" />
+        <result column="agent_image_url" property="agentImageUrl" />
+        <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
+        <result column="deleted_at" property="deletedAt" />
+    </resultMap>
+
+    <insert id="insertAgent"
+        useGeneratedKeys="true"
+        keyProperty="agentId"
+    >
+        INSERT INTO `agent` (
+             user_id,
+             license_no,
+             business_no,
+             office_name,
+             agent_image_url
+        )
+        VALUES (
+            #{userId},
+            #{licenseNo},
+            #{businessNo},
+            #{officeName},
+            #{agentImageUrl}
+        )
+    </insert>
+    
+    <select id="findActiveApplyByUserId" resultMap="AgentResultMap">
+        SELECT
+            *
+        FROM agent
+        WHERE
+            deleted_at IS NULL
+            AND user_id = #{userId}
+            AND approved_status IN ('PENDING', 'APPROVED')
+    </select>
+
+    <select id="findAgentByUserId" resultMap="AgentResultMap">
+        SELECT
+            *
+        FROM agent
+        WHERE
+            deleted_at IS NULL
+            AND user_id = #{userId}
+        ORDER BY agent_id DESC
+        LIMIT 1
+    </select>
+</mapper>

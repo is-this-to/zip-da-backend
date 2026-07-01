@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zipdabackend.domain.property.mapper.PropertyMapper">
+
+    <!-- ===================== 등록 ===================== -->
+
+    <insert id="insertProperty"
+            parameterType="com.zipdabackend.domain.property.entity.Property"
+            useGeneratedKeys="true" keyProperty="propertyId">
+        INSERT INTO property (
+        user_id, description, property_type, transaction_type,
+        price, deposit, monthly_rent, maintenance_fee,
+        region_id, detail_address, area_m2,
+        room_count, bathroom_count, floor, move_in_date,
+        source_type, status
+        ) VALUES (
+        #{userId}, #{description}, #{propertyType}, #{transactionType},
+        #{price}, #{deposit}, #{monthlyRent}, #{maintenanceFee},
+        #{regionId}, #{detailAddress}, #{areaM2},
+        #{roomCount}, #{bathroomCount}, #{floor}, #{moveInDate},
+        #{sourceType}, #{status}
+        )
+    </insert>
+
+    <insert id="insertPropertyImages">
+        INSERT INTO property_image (property_id, image_url, is_thumbnail, sort_order)
+        VALUES
+        <foreach collection="images" item="img" separator=",">
+            (#{img.propertyId}, #{img.imageUrl}, #{img.isThumbnail}, #{img.sortOrder})
+        </foreach>
+    </insert>
+
+    <insert id="insertPropertyOptions">
+        INSERT INTO property_option (property_id, option_id, option_value)
+        VALUES
+        <foreach collection="optionIds" item="optId" separator=",">
+            (#{propertyId}, #{optId}, NULL)
+        </foreach>
+    </insert>
+
+    <!-- ===================== 존재/권한 확인 ===================== -->
+
+    <select id="selectById" resultType="com.zipdabackend.domain.property.entity.Property">
+        SELECT property_id AS propertyId,
+        user_id     AS userId,
+        status      AS status,
+        deleted_at  AS deletedAt,
+        created_at  AS createdAt
+        FROM property
+        WHERE property_id = #{propertyId}
+    </select>
+
+    <select id="countRegion" resultType="int">
+        SELECT COUNT(*) FROM region WHERE region_id = #{regionId}
+    </select>
+
+    <select id="countOptions" resultType="int">
+        SELECT COUNT(*) FROM `option`
+        WHERE option_id IN
+        <foreach collection="optionIds" item="optId" open="(" separator="," close=")">
+            #{optId}
+        </foreach>
+    </select>
+
+    <!-- ===================== 상세 조회 ===================== -->
+
+    <resultMap id="propertyDetailMap"
+               type="com.zipdabackend.domain.property.response.PropertyDetailResponse">
+        <id property="propertyId" column="property_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="description" column="description"/>
+        <result property="propertyType" column="property_type"/>
+        <result property="transactionType" column="transaction_type"/>
+        <result property="price" column="price"/>
+        <result property="deposit" column="deposit"/>
+        <result property="monthlyRent" column="monthly_rent"/>
+        <result property="maintenanceFee" column="maintenance_fee"/>
+        <result property="detailAddress" column="detail_address"/>
+        <result property="areaM2" column="area_m2"/>
+        <result property="roomCount" column="room_count"/>
+        <result property="bathroomCount" column="bathroom_count"/>
+        <result property="floor" column="floor"/>
+        <result property="moveInDate" column="move_in_date"/>
+        <result property="sourceType" column="source_type"/>
+        <result property="status" column="status"/>
+        <result property="propertyUserNick" column="property_user_nick"/>
+        <result property="agentImageUrl" column="agent_image_url"/>
+        <result property="propertyUserRole" column="property_user_role"/>
+        <association property="region"
+                     javaType="com.zipdabackend.domain.property.response.PropertyDetailResponse$Region">
+            <id property="regionId" column="region_id"/>
+            <result property="province" column="province"/>
+            <result property="city" column="city"/>
+            <result property="district" column="district"/>
+        </association>
+    </resultMap>
+
+    <select id="selectDetailById" resultMap="propertyDetailMap">
+        SELECT
+            p.property_id
+            ,p.user_id
+            ,p.description
+            ,p.property_type
+            ,p.transaction_type
+            ,p.price
+            ,p.deposit
+            ,p.monthly_rent
+            ,p.maintenance_fee
+            ,p.detail_address
+            ,p.area_m2
+            ,p.room_count
+            ,p.bathroom_count
+            ,p.floor
+            ,p.move_in_date
+            ,p.source_type
+            ,p.status
+            ,CASE WHEN u.`role` = 'AGENT' THEN a.office_name ELSE u.nick END AS property_user_nick
+            ,CASE WHEN u.`role` = 'AGENT' THEN a.agent_image_url ELSE '' END AS agent_image_url
+            ,u.role AS property_user_role
+            ,r.region_id
+            ,r.province
+            ,r.city
+            ,r.district
+        FROM property p
+            LEFT JOIN region r
+                ON p.region_id = r.region_id
+            LEFT JOIN user u
+                ON u.user_id = p.user_id
+            LEFT JOIN agent a
+                ON u.user_id = a.user_id
+        WHERE
+            p.property_id = #{propertyId}
+            AND p.deleted_at IS NULL
+    </select>
+
+    <select id="selectIsFavorite" resultType="Boolean">
+        SELECT CASE WHEN COUNT(bookmark_id) > 0 THEN TRUE ELSE FALSE END AS is_favorite
+        FROM bookmark
+        WHERE
+            property_id = #{propertyId}
+            AND user_id = #{userId}
+    </select>
+
+    <select id="selectImages"
+            resultType="com.zipdabackend.domain.property.response.PropertyDetailResponse$Image">
+        SELECT image_id     AS imageId,
+        image_url    AS imageUrl,
+        is_thumbnail AS isThumbnail,
+        sort_order   AS sortOrder
+        FROM property_image
+        WHERE property_id = #{propertyId}
+        AND deleted_at IS NULL
+        ORDER BY sort_order
+    </select>
+
+    <select id="selectOptions"
+            resultType="com.zipdabackend.domain.property.response.PropertyDetailResponse$Option">
+        SELECT po.option_id    AS optionId,
+        o.option_name   AS optionName,
+        po.option_value AS optionValue
+        FROM property_option po
+        JOIN `option` o ON po.option_id = o.option_id
+        WHERE po.property_id = #{propertyId}
+    </select>
+
+    <!-- ===================== 수정 ===================== -->
+
+    <update id="updateProperty" parameterType="com.zipdabackend.domain.property.entity.Property">
+        UPDATE property
+        <set>
+            <if test="description != null">description = #{description},</if>
+            <if test="propertyType != null">property_type = #{propertyType},</if>
+            <if test="transactionType != null">transaction_type = #{transactionType},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="deposit != null">deposit = #{deposit},</if>
+            <if test="monthlyRent != null">monthly_rent = #{monthlyRent},</if>
+            <if test="maintenanceFee != null">maintenance_fee = #{maintenanceFee},</if>
+            <if test="regionId != null">region_id = #{regionId},</if>
+            <if test="detailAddress != null">detail_address = #{detailAddress},</if>
+            <if test="areaM2 != null">area_m2 = #{areaM2},</if>
+            <if test="roomCount != null">room_count = #{roomCount},</if>
+            <if test="bathroomCount != null">bathroom_count = #{bathroomCount},</if>
+            <if test="floor != null">floor = #{floor},</if>
+            <if test="moveInDate != null">move_in_date = #{moveInDate},</if>
+        </set>
+        WHERE property_id = #{propertyId}
+        AND deleted_at IS NULL
+    </update>
+
+    <update id="updateStatus">
+        UPDATE property
+        SET status = #{status}
+        WHERE property_id = #{propertyId}
+        AND deleted_at IS NULL
+    </update>
+
+    <delete id="deletePropertyOptions">
+        DELETE FROM property_option WHERE property_id = #{propertyId}
+    </delete>
+
+    <!-- ===================== 삭제 (soft delete) ===================== -->
+
+    <update id="softDelete">
+        UPDATE property
+        SET updated_at = NOW(), deleted_at = NOW()
+        WHERE property_id = #{propertyId}
+        AND deleted_at IS NULL
+    </update>
+
+    <update id="softDeleteImages">
+        UPDATE property_image
+        SET updated_at = NOW(), deleted_at = NOW()
+        WHERE property_id = #{propertyId}
+        AND deleted_at IS NULL
+    </update>
+
+</mapper>
