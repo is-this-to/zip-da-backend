@@ -1,6 +1,5 @@
 package com.zipdabackend.domain.report.controller;
 
-import com.zipdabackend.domain.report.entity.Report;
 import com.zipdabackend.domain.report.request.ReportCreateRequest;
 import com.zipdabackend.domain.report.request.ReportManageRequest;
 import com.zipdabackend.domain.report.request.ReportProcessRequest;
@@ -10,9 +9,11 @@ import com.zipdabackend.domain.report.response.ReportManageResponse;
 import com.zipdabackend.domain.report.response.ReportProcessResponse;
 import com.zipdabackend.domain.report.service.ReportService;
 import com.zipdabackend.global.response.GlobalResponse;
+import io.jsonwebtoken.Claims;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -54,9 +55,12 @@ public class ReportController {
 
     @PostMapping("/reports")
     public ResponseEntity<GlobalResponse<ReportCreateResponse>> create(
+            @AuthenticationPrincipal Claims claims,
             @Valid @RequestBody ReportCreateRequest reportCreateRequest
     ) {
-        ReportCreateResponse result = reportService.create(reportCreateRequest);
+        Long loginUserId = Long.parseLong(claims.getSubject());
+
+        ReportCreateResponse result = reportService.create(loginUserId, reportCreateRequest);
 
         return ResponseEntity.status(200).body(
                 GlobalResponse.<ReportCreateResponse>builder()
