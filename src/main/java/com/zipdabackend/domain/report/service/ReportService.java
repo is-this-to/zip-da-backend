@@ -60,9 +60,9 @@ public class ReportService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public ReportCreateResponse create(ReportCreateRequest reportCreateRequest) {
+    public ReportCreateResponse create(Long loginUserId, ReportCreateRequest reportCreateRequest) {
         // 동일 매물 중복 신고 방지(유저당 1회)
-        Report alreadyReport = reportMapper.findByUserProperty(reportCreateRequest.userId(), reportCreateRequest.propertyId());
+        Report alreadyReport = reportMapper.findByUserProperty(loginUserId, reportCreateRequest.propertyId());
 
         if(alreadyReport != null) {
             throw new ReportAlreadyExistsException("같은 회원이 같은 매물 중복 신고입니다.");
@@ -71,7 +71,7 @@ public class ReportService {
         // 신고하기
         Report newReport = new Report();
         newReport.setPropertyId(reportCreateRequest.propertyId());
-        newReport.setUserId(reportCreateRequest.userId());
+        newReport.setUserId(loginUserId);
         newReport.setReportType(reportCreateRequest.reportType());
         newReport.setReason(reportCreateRequest.reason());
         newReport.setStatus(reportCreateRequest.status());
