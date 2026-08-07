@@ -9,6 +9,7 @@ import com.zipdabackend.domain.user.response.MyReportResponse;
 import com.zipdabackend.domain.user.service.MyPageService;
 import com.zipdabackend.global.response.GlobalResponse;
 import io.jsonwebtoken.Claims;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -60,7 +61,7 @@ public class MyPageController {
     @PatchMapping("/users/me/password")
     public ResponseEntity<GlobalResponse<Void>> updatePassword(
             @AuthenticationPrincipal Claims claims,
-            @RequestBody UserPasswordUpdateRequest request
+            @Valid @RequestBody UserPasswordUpdateRequest request
     ) {
         Long userId = Long.parseLong(claims.getSubject());
         myPageService.updatePassword(userId, request);

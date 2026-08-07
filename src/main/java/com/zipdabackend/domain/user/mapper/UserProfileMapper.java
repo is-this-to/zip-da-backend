@@ -20,7 +20,7 @@ public interface UserProfileMapper {
     // 회원 탈퇴는 실제 삭제가 아니라 deleted_at만 채우는 soft delete로 처리한다.
     int softDeleteUser(Long userId);
 
-    // 비밀번호 변경용. 프론트에서는 아직 연결하지 않는다.
+    // 비밀번호 변경용.
     int updatePassword(Long userId, String encodedPassword);
 
     // 공인중개사 프로필 사진 조회. 일반 유저는 사용하지 않는다.
