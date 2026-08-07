@@ -99,12 +99,12 @@ public class MyPageService {
             throw new NotRegisteredException("회원 정보를 찾을 수 없습니다.");
         }
 
-        // request가 null이거나 password가 비어 있으면 비밀번호 확인 없이 soft delete만 처리한다.
+        if (request == null || request.password() == null || request.password().isBlank()) {
+            throw new NotRegisteredException("회원탈퇴를 진행하려면 비밀번호를 입력해 주세요.");
+        }
 
-        if (request != null && request.password() != null && !request.password().isBlank()) {
-            if (!passwordEncoder.matches(request.password(), user.getPassword())) {
-                throw new NotRegisteredException("비밀번호가 일치하지 않습니다.");
-            }
+        if (!passwordEncoder.matches(request.password(), user.getPassword())) {
+            throw new NotRegisteredException("비밀번호가 일치하지 않습니다.");
         }
 
         int deletedRow = userProfileMapper.softDeleteUser(userId);
@@ -112,9 +112,9 @@ public class MyPageService {
             throw new IllegalStateException("회원탈퇴 처리에 실패했습니다.");
         }
 
-        // 탈퇴한 회원의 refreshToken은 지운다.
         authMapper.updateRefreshToken(userId, null);
     }
+
 
     // 내가 올린 매물 목록 조회.
     public List<MyPropertyCardResponse> getMyProperties(Long userId) {
